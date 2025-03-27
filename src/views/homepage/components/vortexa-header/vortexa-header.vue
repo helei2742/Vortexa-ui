@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import {useRoute} from "vue-router";
+import {computed} from "vue";
+
+const route = useRoute()
+const breadcrumbs = computed(() => {
+  return route.matched.filter((item) => item.meta && item.meta.title)
+})
+
 
 </script>
 
@@ -6,17 +14,13 @@
   <el-page-header icon="">
     <template #breadcrumb>
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: './page-header.html' }">
-          homepage
+        <el-breadcrumb-item v-for="item in breadcrumbs" :key="item.meta.title">
+          {{ item.meta.title }}
         </el-breadcrumb-item>
-        <el-breadcrumb-item
-        ><a href="./page-header.html">route 1</a></el-breadcrumb-item
-        >
-        <el-breadcrumb-item>route 2</el-breadcrumb-item>
       </el-breadcrumb>
     </template>
     <template #title>
-      <h1 class="text-large font-600 mr-3"> Title </h1>
+      <h1 class="text-large font-600 mr-3"> {{ breadcrumbs[breadcrumbs.length - 1].meta.title }} </h1>
     </template>
     <template #extra>
       <div class="flex items-center">

@@ -20,17 +20,31 @@
       <span>Account</span>
     </el-menu-item>
 
+    <el-menu-item index="/environment" :class="verticalMode" @click="goTo('/environment')">
+      <el-icon><Compass /></el-icon>
+      <span>Environment</span>
+    </el-menu-item>
+
     <el-menu-item index="/script" :class="verticalMode" @click="goTo('/script')">
-      <el-icon><SwitchButton /></el-icon>
+      <el-icon>
+        <SwitchButton/>
+      </el-icon>
       <span>Script</span>
+    </el-menu-item>
+
+    <el-menu-item index="/setting" :class="verticalMode" @click="goTo('/setting')">
+      <el-icon>
+        <Setting/>
+      </el-icon>
+      <span>Setting</span>
     </el-menu-item>
   </el-menu>
 </template>
 
 <script lang="ts" setup>
-import {House, User, SwitchButton} from '@element-plus/icons-vue'
+import {House, User, SwitchButton, Setting, Compass} from '@element-plus/icons-vue'
 import {computed} from 'vue'
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
 
 const props = defineProps<{
   isHorizontal: boolean
@@ -44,7 +58,7 @@ const verticalMode = computed(() => ({
 const router = useRouter();
 
 const goTo = (path) => {
-  router.push(path);
+  router.push('/homepage' + path);
 };
 
 </script>
@@ -90,7 +104,7 @@ const goTo = (path) => {
   justify-content: center; /* 水平居中 */
 }
 
-.vortexa-menu > .el-menu-item:hover{
+.vortexa-menu > .el-menu-item:hover {
   background-color: #ecebeb;
   color: rgb(12, 10, 9);
 }
