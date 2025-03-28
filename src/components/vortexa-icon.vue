@@ -5,10 +5,10 @@ import { computed } from 'vue';
 const props = withDefaults(
   defineProps<{
     name: string,
-    size: number
+    size: string
   }>(), {
     name: 'alt',
-    size: 12
+    size: '12'
   })
 
 const iconStyle = computed(() => ({

@@ -7,15 +7,15 @@ import VortexaBanner from "@/views/homepage/components/vortexa-banner-tool/vorte
 const isDesktop = ref(window.innerWidth > 780);
 
 const updateLayout = () => {
-  isDesktop.value = window.innerWidth > 780;
+  isDesktop.value = window.innerWidth > 780
 };
 
 onMounted(() => {
-  window.addEventListener('resize', updateLayout);
+  window.addEventListener('resize', updateLayout)
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateLayout);
+  window.removeEventListener('resize', updateLayout)
 });
 </script>
 

@@ -2,6 +2,10 @@
 import {ref} from "vue";
 import VortexaIcon from "@/components/vortexa-icon.vue";
 import BaseAccountManager from "@/views/homepage/account/components/base-account-manager.vue";
+import TwitterAccountManager from "@/views/homepage/account/components/twitter-account-manager.vue";
+import DiscordAccountManager from "@/views/homepage/account/components/discord-account-manager.vue";
+import TelegramAccountManager
+  from "@/views/homepage/account/components/telegram-account-manager.vue";
 const activeName = ref('Base')
 
 </script>
@@ -27,7 +31,8 @@ const activeName = ref('Base')
           <span>Twitter</span>
         </span>
         </template>
-        Twitter
+
+        <twitter-account-manager/>
       </el-tab-pane>
 
       <el-tab-pane name="Discord">
@@ -37,7 +42,8 @@ const activeName = ref('Base')
           <span>Discord</span>
         </span>
         </template>
-        Discord
+
+        <discord-account-manager/>
       </el-tab-pane>
 
       <el-tab-pane name="telegram">
@@ -47,7 +53,8 @@ const activeName = ref('Base')
           <span>Telegram</span>
         </span>
         </template>
-        Telegram
+
+        <telegram-account-manager/>
       </el-tab-pane>
     </el-tabs>
   </div>
