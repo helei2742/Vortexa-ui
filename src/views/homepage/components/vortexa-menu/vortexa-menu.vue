@@ -5,6 +5,10 @@
     default-active="/dashboard"
     class="vortexa-menu"
     :mode="isHorizontal ? 'horizontal' : 'vertical'"
+    popper-append-to-body
+    menu-trigger="click"
+    :popper-offset="1"
+    popper-class="custom-popper"
   >
     <el-menu-item index="/dashboard" :class="verticalMode" @click="goTo('/dashboard')">
       <el-icon>
@@ -114,4 +118,6 @@ const goTo = (path) => {
   color: rgb(12, 10, 9) !important;
 }
 
+.custom-popper {
+}
 </style>

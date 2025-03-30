@@ -21,35 +21,40 @@ const routes = [
         path: 'dashboard',
         component: DashBoard,
         meta: {
-          title: 'DashBoard'
+          title: 'DashBoard',
+          keepAlive: true
         }
       },
       {
         path: 'account',
         component: Account,
         meta: {
-          title: 'Account'
+          title: 'Account',
+          keepAlive: true
         }
       },
       {
         path: 'environment',
         component: Environment,
         meta: {
-          title: 'Environment'
+          title: 'Environment',
+          keepAlive: true
         }
       },
       {
         path: 'script',
         component: Script,
         meta: {
-          title: 'Script'
+          title: 'Script',
+          keepAlive: true
         }
       },
       {
         path: 'setting',
         component: Setting,
         meta: {
-          title: 'Setting'
+          title: 'Setting',
+          keepAlive: true
         }
       },
     ]

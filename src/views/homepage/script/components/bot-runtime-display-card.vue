@@ -1,36 +1,112 @@
 <script lang="ts" setup>
+import {SwitchButton,Setting} from '@element-plus/icons-vue'
+import {ElMessage, ElMessageBox} from "element-plus";
+import type {BotInstanceInfo} from "@/types/vortexa-type.ts";
 
-interface BotInfo {
-  name: string
+const props = defineProps<{
+  botInstance: BotInstanceInfo
+}>();
+
+// 事件
+const emit = defineEmits(['start-script', 'stop-script', 'delete-script', 'start-task', 'stop-task'])
+
+const startScriptHandler = ()=>{
+  emit('start-script', {instanceId: props.botInstance.id})
 }
 
-withDefaults(defineProps<BotInfo>(), {
-  name: 'test-bot'
-})
+const stopScriptHandler = ()=>{
+  emit('stop-script', {instanceId: props.botInstance.id})
+}
+
+const deleteInstanceHandler = ()=>{
+  ElMessageBox.confirm(
+    'delete the script instance. Continue?',
+    'Warning',
+    {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'danger',
+    }
+  )
+    .then(() => {
+      emit('delete-task', {instanceId: props.botInstance.id})
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
+}
+
+const startTaskHandler = ()=>{
+  emit('start-task', {instanceId: props.botInstance.id})
+}
+
+const stopTaskHandler = ()=>{
+  emit('stop-task', {instanceId: props.botInstance.id})
+}
 </script>
 
 <template>
-  <div class="bot-runtime-display-card">
+  <div class="bot-runtime-display-card" >
     <div class="card-header clearfix">
-      <div style="display:flex; float: left">
-        <el-image class="head-image"/>
-        <div style="font-weight: 700;font-size: 16px">
-          {{ name }}
+      <div style="display:flex; align-items: start">
+        <div style="width: 60px;">
+          <el-image class="head-image"/>
         </div>
-      </div>
+        <div style="flex: 1;overflow: hidden;font-weight: 700">
+          <el-text truncated>{{ botInstance.botKey }}</el-text>
+          <div style="font-weight: 400;">
+            <el-text truncated>
+              {{ botInstance.insertDatetime ? botInstance.insertDatetime : 'unknown start time'}}
+            </el-text>
+          </div>
+        </div>
 
-      <div style="float: right">
-        <i class="el-icon-setting icon-button"/>
+        <el-dropdown  placement="bottom-end">
+          <el-icon class="setting-button"><Setting/></el-icon>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item>Task params edit</el-dropdown-item>
+              <el-dropdown-item>Account edit</el-dropdown-item>
+              <el-dropdown-item
+                style="color: red"
+                @click="deleteInstanceHandler"
+              >
+                delete
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
     </div>
 
-    <div class="data-print-line"/>
+    <div class="data-print-line">
+
+    </div>
 
     <div class="card-detail">
       <div class="card-detail-content"/>
 
-      <el-button class="start-button" icon="el-icon-video-play" type="success" plain>
-        Start Auto Bot
+
+      <el-button v-if="botInstance.botStatus==1" class="opt-button" type="danger" plain>
+        <el-icon>
+          <SwitchButton/>
+        </el-icon>
+        Stop Task
+      </el-button>
+      <el-button
+        v-else
+        class="opt-button"
+        type="success"
+        @click="startScriptHandler"
+        plain
+      >
+        <el-icon>
+          <SwitchButton/>
+        </el-icon>
+        Start Script
       </el-button>
     </div>
   </div>
@@ -38,9 +114,11 @@ withDefaults(defineProps<BotInfo>(), {
 
 <style scoped>
 .bot-runtime-display-card {
-  width: 416px;
-  height: 398px;
-  background-color: #606266;
+  width: 300px;
+  min-width: 300px;
+  //max-width: 500px;
+  height: 350px;
+  background-color: rgba(110, 110, 110, 0.1);
   padding: 24px;
 
   margin-left: 12px;
@@ -55,7 +133,7 @@ withDefaults(defineProps<BotInfo>(), {
 
 .data-print-line {
   height: 48px;
-  margin-top: 16px;
+  margin-top: 4px;
 
 }
 
@@ -88,11 +166,19 @@ withDefaults(defineProps<BotInfo>(), {
   height: 184px;
 }
 
-.start-button {
-  width: 368px;
-  height: 44px;
-
+.opt-button {
+  width: 100%;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
+  text-align: center;
+}
+
+.setting-button{
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.setting-button:hover{
+  color: #000000;
 }
 </style>

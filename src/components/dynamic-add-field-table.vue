@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import {ArrowDown, Upload} from '@element-plus/icons-vue'
-import {computed, ref,} from "vue";
+import {ArrowDown, Upload, Plus,CloseBold} from '@element-plus/icons-vue'
+import {computed, onMounted, reactive, ref, toRaw,} from "vue";
 import {ElMessage, ElMessageBox, type TableColumnCtx} from "element-plus";
 import * as XLSX from 'xlsx';
-
-const emit = defineEmits(['update-data', 'delete-data'])
 import {isEqual} from 'lodash';
+import {PageQuery, UploadEntry} from "@/types/vortexa-type-common.ts";
+import {PAGINATION_PAGE_SIZES} from "@/config/vortexa-config.ts";
+import VortexaIcon from "@/components/vortexa-icon.vue";
+
+const emit = defineEmits(['page-query', 'update-data', 'delete-data'])
 
 interface Props {
   headers: string[],
@@ -15,26 +18,55 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const selectFieldList = ref([...props.headers])
+// 是否更新状态
 const isCanUpdate = ref(false)
+// 更新数据
 const tableUploadData = ref([])
+
+// 表显示的全字段
+const tableFieldList = computed(() => {
+  return Array.from(new Set([...props.headers, ...selectFieldList.value, ...appendFieldList.value]))
+})
+
+// 新增的一行数据
+const isInAddLine = ref(false)
+const newRawData = ref({})
+
+// 表展示的全数据
 const tableDataList = computed(() => {
+  const list = []
+  if (isInAddLine.value) {
+    list.push(newRawData.value)
+  }
   if (isCanUpdate.value) {
-    return tableUploadData.value
+    list.push(...tableUploadData.value)
   } else {
-    return props.data
+    list.push(...props.data)
   }
+  return list;
 })
 
+// 选择展示的额外字段列表
+const selectFieldList = ref([])
+
+const newFieldDialogVisible = ref(false)
+const newFieldValue = ref(null)
+const appendFieldList = ref([])
+
+// 额外字段列表
 const extraFieldList = computed(() => {
-  if (tableDataList.value.length > 0) {
-    const keys: string[] = Object.keys(tableDataList.value[0]);
-    return keys.filter(key => props.headers.indexOf(key) === -1)
-  }
-  return []
+  const extraField = new Set<string>()
+  tableDataList.value.forEach(item => {
+    const keys: string[] = Object.keys(item);
+    keys.forEach(key => extraField.add(key))
+  })
+  props.headers.forEach(key => {
+    extraField.delete(key)
+  })
+  return [...extraField]
 })
 
-
+// 获取field字段下所有值
 function getFieldValueList(field): Array<{ text: string, value: string }> {
   if (tableDataList.value.length > 0) {
     const unique = [...new Set(tableDataList.value.map(item => item[field]))]
@@ -45,6 +77,7 @@ function getFieldValueList(field): Array<{ text: string, value: string }> {
   return []
 }
 
+// 列过滤
 const filterHandler = (
   value: string,
   row: object,
@@ -54,13 +87,36 @@ const filterHandler = (
   return row[property] === value
 }
 
+// 分页参数
+const pageQuery = reactive(new PageQuery({
+  page: 1,
+  limit: PAGINATION_PAGE_SIZES[0],
+  filterMap: new Map()
+}))
+const pageTotal = ref(0)
 
+// 分页查询表数据
+const pageQueryTableData = () => {
+  emit('page-query', toRaw(pageQuery))
+}
+
+const pageChangeHandler = () => {
+  pageQueryTableData()
+}
+
+// 定义方法
+function updatePageInfo(total) {
+  pageTotal.value = total
+}
+
+
+// 选择的行
 const multipleSelection = ref([])
 
+// 选择行改变处理
 function handleSelectionChange(lineData) {
   multipleSelection.value = lineData
 }
-
 
 // editable table
 const editState = ref({
@@ -68,19 +124,32 @@ const editState = ref({
   raw: {}
 })
 
-function handleUpdateRaw(raw) {
-  console.log(raw)
-  console.log(editState.value.raw)
-  if (!isEqual(raw, editState.value.raw)) {
-    emit('update-data', {raw: raw})
+// 新增列
+const newFieldHandler = () => {
+  if (newFieldValue.value != ''
+    && props.headers.indexOf(newFieldValue.value) == -1
+    && extraFieldList.value.indexOf(newFieldValue.value) == -1
+  ) {
+    appendFieldList.value.push(newFieldValue.value)
+    newFieldDialogVisible.value = false
+  } else {
+    ElMessage({
+      type: 'warning',
+      message: 'Field exist',
+    })
   }
+}
 
+// 更新单行
+function handleUpdateRaw(raw) {
+  if (!isEqual(raw, editState.value.raw)) {
+    emit('update-data', new UploadEntry([raw]))
+  }
   editState.value.row = -1
   editState.value.raw = {}
 }
 
 // upload
-
 const handleBeforeUpload = (file) => {
   const reader = new FileReader();
 
@@ -99,7 +168,14 @@ const handleBeforeUpload = (file) => {
       if (jsonData.length > 0) {
         tableUploadData.value = jsonData
         isCanUpdate.value = true
-        selectFieldList.value = [...props.headers, ...Object.keys(jsonData[0])]
+        const selected = []
+        Object.keys(jsonData[0]).forEach(key => {
+          key = key.trim()
+          if (selected.indexOf(key) == -1) {
+            selected.push(key)
+          }
+        })
+        selectFieldList.value = selected
       } else {
         ElMessage.warning('文件不含数据')
       }
@@ -123,7 +199,7 @@ const updateDataHandler = () => {
     }
   )
     .then(() => {
-      emit('delete-data', {dataList: tableUploadData.value})
+      emit('update-data', new UploadEntry(tableUploadData.value))
     })
     .catch(() => {
       ElMessage({
@@ -132,6 +208,7 @@ const updateDataHandler = () => {
       })
     })
 }
+
 //delete
 const handleDelete = () => {
   ElMessageBox.confirm(
@@ -175,12 +252,33 @@ const getColumnWidth = (col) => {
   return width + 'px';
 };
 
+const reload = () => {
+  tableUploadData.value = []
+  pageQuery.page = 1
+  pageQuery.limit = PAGINATION_PAGE_SIZES[0]
+  pageTotal.value = 0
+  selectFieldList.value = []
+  editState.value.raw = {}
+  editState.value.row = -1
+  multipleSelection.value = []
+  isCanUpdate.value = false
+  isInAddLine.value = false
+  newRawData.value = {}
+
+  pageQueryTableData()
+}
+
+onMounted(() => {
+  pageQueryTableData()
+})
+
+defineExpose({updatePageInfo, reload})
 </script>
 
 <template>
   <div class="dynamic-add-field-table">
     <div class="select-bar-list">
-      <el-dropdown trigger="click">
+      <el-dropdown trigger="click" :hide-on-click="false">
         <el-button>
           <el-icon class="el-icon--left">
             <arrow-down/>
@@ -190,11 +288,11 @@ const getColumnWidth = (col) => {
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item v-for="item in headers" :key="item">
-              <el-checkbox :label="item" disabled/>
+              <el-checkbox :value="item" disabled>{{ item }}</el-checkbox>
             </el-dropdown-item>
             <el-dropdown-item v-for="item in extraFieldList" :key="item">
               <el-checkbox-group v-model="selectFieldList">
-                <el-checkbox :label="item"/>
+                <el-checkbox :value="item">{{ item }}</el-checkbox>
               </el-checkbox-group>
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -202,6 +300,7 @@ const getColumnWidth = (col) => {
       </el-dropdown>
 
       <el-upload
+        v-if="!isCanUpdate"
         class="upload-demo"
         action=""
         :auto-upload="true"
@@ -209,17 +308,49 @@ const getColumnWidth = (col) => {
         accept=".xlsx"
       >
         <template #trigger>
-          <el-button>select file</el-button>
+          <el-button class="button-morandi">
+            <VortexaIcon name="excel" size="14"/>
+            Select File
+          </el-button>
         </template>
-        <el-button v-if="isCanUpdate" type="success" @click="updateDataHandler">
-          Upload
+      </el-upload>
+      <div v-if="isCanUpdate">
+        <el-button
+          type="info"
+          @click="isCanUpdate = false"
+          :disabled="tableUploadData.length < 1"
+        >
+          <el-icon><CloseBold /></el-icon>
+          Cancel
+        </el-button>
+        <el-button
+          style="margin-left: 0"
+          type="success"
+          @click="updateDataHandler"
+          :disabled="tableUploadData.length < 1"
+        >
           <el-icon class="el-icon--right">
             <Upload/>
           </el-icon>
+          Upload
         </el-button>
-      </el-upload>
+      </div>
 
-      <slot name="toolbar"></slot>
+      <el-button
+        class="button-gray"
+        @click="isInAddLine = true"
+      >
+        <el-icon>
+          <Plus/>
+        </el-icon>
+        Add One
+      </el-button>
+
+      <div style="flex: 1">
+        <slot name="toolbar"></slot>
+      </div>
+
+      <span style="font-weight: 700">Total:{{ pageTotal }}</span>
     </div>
 
     <div class="add-field-table">
@@ -229,20 +360,20 @@ const getColumnWidth = (col) => {
                 highlight-current-row
                 stripe
                 size="large"
+                table-layout="fixed"
                 @selection-change="handleSelectionChange"
                 style="width: 100%"
       >
         <el-table-column type="selection" width="55"/>
 
         <el-table-column
-          v-for="item in selectFieldList"
+          v-for="item in tableFieldList"
           :key="item"
           :prop="item"
           :label="item"
           show-overflow-tooltip
           :filters="getFieldValueList(item)"
           :filter-method="filterHandler"
-
           :min-width="getColumnWidth(item)"
         >
           <template #default="scope">
@@ -257,7 +388,7 @@ const getColumnWidth = (col) => {
           </template>
         </el-table-column>
 
-        <el-table-column fixed="right" width="180">
+        <el-table-column fixed="right" width="200">
           <template #header>
             <el-button
               size="small"
@@ -267,7 +398,19 @@ const getColumnWidth = (col) => {
             >
               Delete
             </el-button>
+            <el-button
+              size="small"
+              type="primary"
+              @click="newFieldDialogVisible = true"
+              v-else
+            >
+              <el-icon>
+                <Plus/>
+              </el-icon>
+              New Field
+            </el-button>
           </template>
+
           <template #default="scope">
             <el-button
               v-if="editState.row==scope.$index"
@@ -277,6 +420,7 @@ const getColumnWidth = (col) => {
               Save
             </el-button>
             <el-button v-else size="small"
+                       type="info"
                        @click="editState.row=scope.$index;editState.raw=JSON.parse(JSON.stringify(scope.row))">
               Edit
             </el-button>
@@ -284,7 +428,38 @@ const getColumnWidth = (col) => {
         </el-table-column>
       </el-table>
     </div>
+    <div>
+      <el-pagination
+        style="margin-top: 8px; float: right; margin-right: 20px"
+        v-model:current-page="pageQuery.page"
+        v-model:page-size="pageQuery.limit"
+        :page-sizes="PAGINATION_PAGE_SIZES"
+        :background="false"
+        layout="sizes, prev, pager, next, jumper"
+        :total="pageTotal"
+        @size-change="pageChangeHandler"
+        @current-change="pageChangeHandler"
+      />
+    </div>
   </div>
+
+
+  <el-dialog
+    v-model="newFieldDialogVisible"
+    title="New Data Field"
+    width="420"
+    align-center
+  >
+    <el-input v-model="newFieldValue" autocomplete="off" placeholder="Enter new field name"/>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="newFieldDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="newFieldHandler">
+          Confirm
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
@@ -346,4 +521,5 @@ const getColumnWidth = (col) => {
   height: 30px;
   font-size: 16px;
 }
+
 </style>

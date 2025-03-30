@@ -20,21 +20,29 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="vortexa-app">
-    <div style="display: flex;">
-      <div v-if="isDesktop" class="sidebar">
-        <vortexa-banner/>
+  <div>
+    <div class="vortexa-app">
+      <div style="display: flex; margin-bottom: 60px">
+        <div v-if="isDesktop" class="sidebar">
+          <vortexa-banner/>
+          <vortexa-menu :is-horizontal="!isDesktop"/>
+        </div>
+
+        <div class="vortexa-main">
+          <vortexa-header style="margin-bottom: 14px"/>
+
+          <!--        <router-view/>-->
+          <router-view v-slot="{ Component, route }">
+            <keep-alive>
+              <component v-if="route.meta.keepAlive" :is="Component" :key="route.fullPath"/>
+            </keep-alive>
+            <component v-if="!route.meta.keepAlive" :is="Component" :key="route.fullPath"/>
+          </router-view>
+        </div>
+      </div>
+      <div v-if="!isDesktop" class="bottom-menu">
         <vortexa-menu :is-horizontal="!isDesktop"/>
       </div>
-
-      <div class="vortexa-main">
-        <vortexa-header style="margin-bottom: 14px"/>
-        <router-view/>
-      </div>
-    </div>
-
-    <div class="bottom-menu">
-      <vortexa-menu v-if="!isDesktop" :is-horizontal="!isDesktop"/>
     </div>
   </div>
 </template>
@@ -58,6 +66,8 @@ onUnmounted(() => {
 }
 
 .bottom-menu {
+  z-index: 10;
+  background-color: #ffffff;
   position: fixed;
   bottom: 0;
   height: 60px;
