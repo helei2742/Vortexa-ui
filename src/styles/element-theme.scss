@@ -2,18 +2,18 @@
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (
-      'base': #388e3c, // 主色：深绿色
-      'light-3': #4caf50,
-      'light-5': #66bb6a,
-      'light-7': #81c784,
-      'dark-2': #2e7d32
-    ),
-    'success': (
-      'base': #43a047,
+      'base': #4caf50, // 清新绿
       'light-3': #66bb6a,
       'light-5': #81c784,
       'light-7': #a5d6a7,
       'dark-2': #388e3c
+    ),
+    'success': (
+      'base': #66bb6a, // 柔和绿
+      'light-3': #81c784,
+      'light-5': #a5d6a7,
+      'light-7': #c8e6c9,
+      'dark-2': #4caf50
     ),
     'warning': (
       'base': #fdd835,
@@ -56,10 +56,12 @@
 .button-primary {
   background-color: #388e3c !important;
   border-color: #388e3c !important;
+
   &:hover {
     background-color: #2e7d32 !important;
     border-color: #2e7d32 !important;
   }
+
   &:active {
     background-color: #1b5e20 !important;
     border-color: #1b5e20 !important;

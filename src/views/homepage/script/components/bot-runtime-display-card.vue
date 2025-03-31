@@ -1,24 +1,65 @@
 <script lang="ts" setup>
-import {SwitchButton,Setting} from '@element-plus/icons-vue'
+import {SwitchButton, Setting} from '@element-plus/icons-vue'
 import {ElMessage, ElMessageBox} from "element-plus";
 import type {BotInstanceInfo} from "@/types/vortexa-type.ts";
+import {computed, ref} from "vue";
+import {stringToEnum} from "@/util/common.ts";
+import {BotInstanceStatus} from "@/config/vortexa-config.ts";
+import HorizontalScrollBar from "@/components/horizontal-scroll-bar/horizontal-scroll-bar.vue";
+import BotJobDetail from "@/views/homepage/script/components/bot-job-detail.vue";
+
 
 const props = defineProps<{
   botInstance: BotInstanceInfo
 }>();
 
-// 事件
-const emit = defineEmits(['start-script', 'stop-script', 'delete-script', 'start-task', 'stop-task'])
+// 运行状态
+const botInstanceStatus = computed(() => {
+  return stringToEnum(props.botInstance.params['bot_instance_status'], BotInstanceStatus)
+})
 
-const startScriptHandler = ()=>{
+// 基本任务
+const botInstanceBasicTask = computed(() => {
+  return props.botInstance.params['basic_job_list']
+})
+// 任务
+const botInstanceTask = computed(() => {
+  return props.botInstance.jobParams
+})
+// 当前显示的job
+const activeJobName = ref('')
+const activeJobParams = computed(() => {
+  if (activeJobName.value) {
+    return props.botInstance.jobParams[activeJobName.value]
+  }
+  return {}
+})
+// 当前显示的job 变化
+const activeJobChangeHandler = (newJobName: string) => {
+  activeJobName.value = newJobName
+}
+
+// 事件
+const emit = defineEmits([
+  'start-script',
+  'stop-script',
+  'delete-script',
+  'start-script-job',
+  'stop-script-job'
+])
+
+// 开始运行Script
+const startScriptHandler = () => {
   emit('start-script', {instanceId: props.botInstance.id})
 }
 
-const stopScriptHandler = ()=>{
+// 停止运行Script
+const stopScriptHandler = () => {
   emit('stop-script', {instanceId: props.botInstance.id})
 }
 
-const deleteInstanceHandler = ()=>{
+// 删除Script
+const deleteInstanceHandler = () => {
   ElMessageBox.confirm(
     'delete the script instance. Continue?',
     'Warning',
@@ -39,42 +80,55 @@ const deleteInstanceHandler = ()=>{
     })
 }
 
-const startTaskHandler = ()=>{
-  emit('start-task', {instanceId: props.botInstance.id})
+// 开始任务
+const startTaskHandler = (jobName) => {
+  emit('start-script-job', {
+    botName: props.botInstance.botName,
+    botKey: props.botInstance.botKey,
+    jobName: jobName
+  })
 }
 
-const stopTaskHandler = ()=>{
-  emit('stop-task', {instanceId: props.botInstance.id})
+// 停止任务
+const stopTaskHandler = (jobName) => {
+  emit('stop-script-job', {
+    botName: props.botInstance.botName,
+    botKey: props.botInstance.botKey,
+    jobName: jobName
+  })
 }
 </script>
 
 <template>
-  <div class="bot-runtime-display-card" >
+  <div class="bot-runtime-display-card">
     <div class="card-header clearfix">
       <div style="display:flex; align-items: start">
         <div style="width: 60px;">
           <el-image class="head-image"/>
         </div>
-        <div style="flex: 1;overflow: hidden;font-weight: 700">
+        <div
+          style="flex: 1;overflow: hidden;font-weight: 700; cursor: pointer"
+          @click="activeJobName=''"
+        >
           <el-text truncated>{{ botInstance.botKey }}</el-text>
           <div style="font-weight: 400;">
             <el-text truncated>
-              {{ botInstance.insertDatetime ? botInstance.insertDatetime : 'unknown start time'}}
+              {{ botInstance.insertDatetime ? botInstance.insertDatetime : 'unknown start time' }}
             </el-text>
           </div>
         </div>
 
-        <el-dropdown  placement="bottom-end">
-          <el-icon class="setting-button"><Setting/></el-icon>
+        <el-dropdown placement="bottom-end">
+          <el-icon class="setting-button">
+            <Setting/>
+          </el-icon>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>Task params edit</el-dropdown-item>
               <el-dropdown-item>Account edit</el-dropdown-item>
               <el-dropdown-item
-                style="color: red"
                 @click="deleteInstanceHandler"
               >
-                delete
+                <span style="color: red">delete</span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -82,15 +136,40 @@ const stopTaskHandler = ()=>{
       </div>
     </div>
 
-    <div class="data-print-line">
 
+    <div class="data-print-line">
+      <horizontal-scroll-bar :step="180">
+        <el-button
+          v-for="(task, jobName) in botInstanceTask"
+          size="small"
+          :key="jobName"
+          class="button-morandi"
+          :class="{'active-job-button': activeJobName==jobName}"
+          @click="activeJobChangeHandler(jobName, task)"
+          plain
+        >
+          {{ jobName }}
+        </el-button>
+      </horizontal-scroll-bar>
     </div>
 
     <div class="card-detail">
-      <div class="card-detail-content"/>
+      <el-scrollbar class="card-detail-content">
+        <bot-job-detail
+          :job-name="activeJobName"
+          :job-params="activeJobParams"
+          :is-running="false"
+          @start-task="startTaskHandler"
+          @stop-task="stopTaskHandler"
+        />
+      </el-scrollbar>
 
-
-      <el-button v-if="botInstance.botStatus==1" class="opt-button" type="danger" plain>
+      <el-button v-if="botInstanceStatus==BotInstanceStatus.RUNNING"
+                 @click="stopScriptHandler"
+                 class="opt-button"
+                 type="danger"
+                 plain
+      >
         <el-icon>
           <SwitchButton/>
         </el-icon>
@@ -132,9 +211,9 @@ const stopTaskHandler = ()=>{
 }
 
 .data-print-line {
-  height: 48px;
+  height: 28px;
   margin-top: 4px;
-
+  border-bottom: 1px solid #9da3ae;
 }
 
 .card-detail {
@@ -163,22 +242,33 @@ const stopTaskHandler = ()=>{
 }
 
 .card-detail-content {
-  height: 184px;
+  height: 222px;
 }
 
 .opt-button {
+  margin-top: 4px;
   width: 100%;
   font-size: 16px;
   font-weight: 600;
   text-align: center;
 }
 
-.setting-button{
+.setting-button {
   font-size: 23px;
   cursor: pointer;
 }
 
-.setting-button:hover{
+.setting-button:hover {
   color: #000000;
 }
+
+.active-job-button {
+  background-color: aquamarine !important;
+  color: #000000 !important;
+}
+
+:deep(.el-descriptions__body), :deep(.el-descriptions__label.el-descriptions__cell.is-bordered-label) {
+  background-color: transparent !important;
+}
 </style>
+

@@ -1,12 +1,13 @@
 import {API_DEFAULT_PAGE, API_DEFAULT_PAGE_SIZE} from "@/config/vortexa-config.ts";
+import type {RemotingCommand} from "@/types/remoting_command_pb.ts";
 
 /**
  * 上传实体
  */
 export class UploadEntry {
-  rawLines: Lit<Map<string, object>>
+  rawLines: Array<Map<string, object>>
 
-  constructor(rawLines: Lit<Map<string, object>>) {
+  constructor(rawLines: Array<Map<string, object>>) {
     this.rawLines = rawLines
   }
 }
@@ -31,7 +32,11 @@ export class PageQuery {
   limit: number = API_DEFAULT_PAGE_SIZE
   filterMap?: Map<string, object>
 
-  constructor({page, limit, filterMap}:{page?:number, limit?:number, filterMap?}) {
+  constructor({page, limit, filterMap}: {
+    page?: number,
+    limit?: number,
+    filterMap?: Map<string, object>
+  }) {
     this.page = page == undefined ? API_DEFAULT_PAGE : page
     this.limit = limit == undefined ? API_DEFAULT_PAGE_SIZE : limit
     this.filterMap = filterMap
@@ -55,4 +60,8 @@ export class PageResult<T> {
     this.pageSize = pageSize
     this.list = list
   }
+}
+
+export interface WebsocketMessageHandler {
+   handle(command:RemotingCommand)
 }

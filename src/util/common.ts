@@ -20,3 +20,13 @@ export function flattenObject(obj: never): Record<string, never> {
 }
 
 
+export function stringToEnum<T>(value: string, enumObj: T): T[keyof T] | undefined {
+  return Object.values(enumObj).includes(value as T[keyof T]) ? (value as T[keyof T]) : undefined;
+}
+
+export function generateRandomGreenColor(): string {
+  const g = Math.floor(Math.random() * 156) + 100;
+  const r = Math.floor(Math.random() * 100);
+  const b = Math.floor(Math.random() * 100);
+  return `rgb(${r}, ${g}, ${b})`
+}

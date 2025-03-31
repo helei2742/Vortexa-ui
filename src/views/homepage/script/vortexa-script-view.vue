@@ -2,29 +2,42 @@
 import {Filter, RefreshRight} from '@element-plus/icons-vue'
 import BotRuntimeDisplayCard from "@/views/homepage/script/components/bot-runtime-display-card.vue";
 import {BotInstanceInfo} from "@/types/vortexa-type.ts";
-import {onMounted, ref, nextTick, computed} from "vue";
+import {onMounted, ref, nextTick, computed, reactive} from "vue";
 import ContentBlock from "@/components/content-block/content-block.vue";
 import {BotInstanceStatus} from "@/config/vortexa-config.ts";
+import {pageQueryBotInstanceNetwork, startScriptJobNetwork} from "@/api/bot.ts";
+import {PageQuery, PageResult} from "@/types/vortexa-type-common.ts";
+import {ElMessage} from "element-plus";
+
+const filters = ref<{
+  status: BotInstanceStatus
+}>({status: BotInstanceStatus.ALL})
 
 const botInstanceList = ref<Array<BotInstanceInfo>>([])
 
-const filters = ref<{
-  status: number
-}>({status: BotInstanceStatus.ALL})
-
 const displayInstanceList = computed(() => {
+  console.log(botInstanceList.value)
   return botInstanceList.value.filter(info => {
     let filter: boolean = true
     if (filterValue.value != null) {
       filter = info.botName.includes(filterValue.value) || info.botKey.includes(filterValue.value)
     }
     if (filters.value.status != BotInstanceStatus.ALL) {
-      filter = info.botStatus == filters.value.status
+      filter = info.params['bot_instance_status'] == filters.value.status
     }
-    console.log(filter)
     return filter
   })
 })
+
+const isLoading = ref(false)
+// 分页查询数据
+const totalCount = ref(0)
+const pageQuery = reactive(new PageQuery({
+  page: 1,
+  limit: 10,
+  filterMap: new Map<string, object>()
+}))
+
 
 // 1. 过滤
 // 过滤下拉框宽度
@@ -33,24 +46,62 @@ const filterValue = ref('')
 
 
 function filterByStatus(filterStatus: BotInstanceStatus) {
-  filters.value.status = filterStatus.valueOf()
+  filters.value.status = filterStatus
 }
 
 // 2.BotInstance
 // 网络请求获取实例
-const pageQueryBotInstanceNetwork = () => {
-  botInstanceList.value.push(new BotInstanceInfo({botKey: 'bot', botStatus: 0}))
-  botInstanceList.value.push(new BotInstanceInfo({botKey: 'bot', botStatus: 1}))
-  botInstanceList.value.push(new BotInstanceInfo({botKey: 'bot', botStatus: -1}))
-  for (let i = 0; i < 10; i++) {
-    botInstanceList.value.push(new BotInstanceInfo({botKey: 'bot' + i}))
-  }
+const scrollQueryDisabled = ref(false)
+const pageQueryBotInstance = () => {
+  if (isLoading.value) return
+  isLoading.value = true
+
+  pageQueryBotInstanceNetwork(pageQuery)
+    .then(result => {
+      const pageResult: PageResult<BotInstanceInfo> = result.data
+      botInstanceList.value.push(...pageResult.list)
+      totalCount.value = pageResult.total
+
+      console.log('page query bot instance', pageQuery, pageResult)
+      pageQuery.page += 1
+
+      if (pageResult.total == botInstanceList.value.length) {
+        ElMessage({
+          message: 'Total script loaded',
+          type: 'warning',
+        })
+        scrollQueryDisabled.value = true
+      }
+    })
+    .catch(() => {
+      scrollQueryDisabled.value = true
+    })
+    .finally(() => {
+      isLoading.value = false
+    })
+}
+
+// 开始运行script的某个job
+const startScriptJob = (params) => {
+  startScriptJobNetwork(params)
+    .then(response=>{
+      console.log('start script job', response)
+    })
+}
+
+
+const reload = () => {
+  totalCount.value = 0
+  pageQuery.page = 1
+  pageQuery.limit = 10
+  pageQuery.filterMap = new Map()
+  botInstanceList.value = []
+  pageQueryBotInstance()
 }
 
 onMounted(async () => {
   await nextTick()
   dropdownWidth.value = document.querySelector('.filter-button').offsetWidth
-  pageQueryBotInstanceNetwork()
 })
 </script>
 
@@ -62,7 +113,10 @@ onMounted(async () => {
       <div>
         <el-input v-model="filterValue" placeholder="Search by name"/>
         <div>
-          <el-button style="width: 90px">
+          <el-button
+            style="width: 90px"
+            @click="reload"
+          >
             <el-icon>
               <RefreshRight/>
             </el-icon>
@@ -95,7 +149,7 @@ onMounted(async () => {
     <!--展示块-->
     <content-block class="vortexa-script-viw-block-2">
       <template #header>
-        <div style="margin-bottom: 12px">
+        <el-button-group style="margin-bottom: 12px">
           <el-button
             type="info"
             @click="filterByStatus(BotInstanceStatus.ALL)"
@@ -117,21 +171,30 @@ onMounted(async () => {
           >
             Stopped
           </el-button>
-          <span style="float: right;font-size: 14px; font-weight: 300">Total:</span>
-        </div>
+        </el-button-group>
       </template>
-      <div class="scroll-bar-wrapper">
-        <div class="vortexa-script-display-content" v-infinite-scroll="pageQueryBotInstanceNetwork">
+
+      <div class="scroll-bar-wrapper" v-loading="isLoading">
+        <div
+          class="vortexa-script-display-content"
+          v-infinite-scroll="pageQueryBotInstance"
+          :infinite-scroll-disabled="scrollQueryDisabled"
+        >
           <bot-runtime-display-card
+            class="vortexa-script-item"
             v-for="botInstance in displayInstanceList"
             :key="botInstance.botKey"
             :bot-instance="botInstance"
-            class="vortexa-script-item"
+            @start-script-job="startScriptJob"
           />
         </div>
         <el-backtop target=".scroll-bar-wrapper" :bottom="100" :right="100">
         </el-backtop>
       </div>
+
+      <span style="float: right;font-size: 14px; font-weight: 600">
+        Total:{{ totalCount }}
+      </span>
     </content-block>
   </div>
 </template>
@@ -150,11 +213,11 @@ onMounted(async () => {
 }
 
 .vortexa-script-viw-block-2 {
-
+  padding-bottom: 60px;
 }
 
 .scroll-bar-wrapper {
-  height: 900px;
+  height: calc(100vh - 260px);
   overflow-y: scroll;
 }
 
@@ -192,12 +255,13 @@ onMounted(async () => {
   .vortexa-script-view {
     display: flex;
     flex-direction: row-reverse;
-    height: calc(100vh - 130px);
+    height: calc(100vh - 100px);
     gap: 10px;
   }
 
   .vortexa-script-viw-block-2 {
     width: calc(100% - 250px);
+    height: calc(100vh - 100px);
   }
 }
 </style>

@@ -1,4 +1,9 @@
 <script lang="ts" setup>
+import { useWebsocketStore } from '@/stores/useWebsocket.ts';
+
+const {websocketClient} = useWebsocketStore()
+
+websocketClient.connect()
 
 </script>
 
