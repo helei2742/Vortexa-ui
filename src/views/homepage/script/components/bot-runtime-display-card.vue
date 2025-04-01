@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import {SwitchButton, Setting} from '@element-plus/icons-vue'
+import {SwitchButton, More} from '@element-plus/icons-vue'
 import {ElMessage, ElMessageBox} from "element-plus";
 import type {BotInstanceInfo} from "@/types/vortexa-type.ts";
 import {computed, ref} from "vue";
 import {stringToEnum} from "@/util/common.ts";
+import {useCommonStore} from "@/stores/commonStore.ts";
 import {BotInstanceStatus} from "@/config/vortexa-config.ts";
 import HorizontalScrollBar from "@/components/horizontal-scroll-bar/horizontal-scroll-bar.vue";
 import BotJobDetail from "@/views/homepage/script/components/bot-job-detail.vue";
@@ -19,9 +20,10 @@ const botInstanceStatus = computed(() => {
 })
 
 // 基本任务
-const botInstanceBasicTask = computed(() => {
-  return props.botInstance.params['basic_job_list']
-})
+// const botInstanceBasicTask = computed(() => {
+//   return props.botInstance.params['basic_job_list']
+// })
+
 // 任务
 const botInstanceTask = computed(() => {
   return props.botInstance.jobParams
@@ -97,6 +99,12 @@ const stopTaskHandler = (jobName) => {
     jobName: jobName
   })
 }
+
+// 账户日志
+const {updateCurrentBotInstance} = useCommonStore()
+const showBotLog = () => {
+  updateCurrentBotInstance(props.botInstance, true)
+}
 </script>
 
 <template>
@@ -120,15 +128,18 @@ const stopTaskHandler = (jobName) => {
 
         <el-dropdown placement="bottom-end">
           <el-icon class="setting-button">
-            <Setting/>
+            <More/>
           </el-icon>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>Account edit</el-dropdown-item>
+              <el-dropdown-item>Account Edit</el-dropdown-item>
+              <el-dropdown-item @click="showBotLog">
+                Runtime Log
+              </el-dropdown-item>
               <el-dropdown-item
                 @click="deleteInstanceHandler"
               >
-                <span style="color: red">delete</span>
+                <span style="color: red">Delete</span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>

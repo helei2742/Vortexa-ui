@@ -1,5 +1,4 @@
 import {API_DEFAULT_PAGE, API_DEFAULT_PAGE_SIZE} from "@/config/vortexa-config.ts";
-import type {RemotingCommand} from "@/types/remoting_command_pb.ts";
 
 /**
  * 上传实体
@@ -20,7 +19,7 @@ export class Result<T> {
   errorMsg: string
   data: T
 
-  constructor({success, errorMsg, data}) {
+  constructor({success, errorMsg, data}: { success: boolean, errorMsg: string, data: T }) {
     this.success = success
     this.errorMsg = errorMsg
     this.data = data
@@ -53,7 +52,13 @@ export class PageResult<T> {
   pageNum: number;
   pageSize: number;
 
-  constructor({total, pages, pageNum, pageSize, list}) {
+  constructor({total, pages, pageNum, pageSize, list}: {
+    total: number,
+    pages: number,
+    pageNum: number,
+    pageSize: number,
+    list: Array<T>
+  }) {
     this.total = total
     this.pages = pages
     this.pageNum = pageNum
@@ -62,6 +67,31 @@ export class PageResult<T> {
   }
 }
 
-export interface WebsocketMessageHandler {
-   handle(command:RemotingCommand)
+/**
+ * websocket 发送的消息
+ */
+export class WebSocketMessage {
+  txId: string
+  code: number
+  success: boolean
+  params: object
+  message: string
+  errorMsg: string
+
+  constructor({txId, code, success, params, message, errorMsg}: {
+    txId: string
+    code: number,
+    success: boolean,
+    params: string
+    message: string
+    errorMsg: string
+  }) {
+    this.txId = txId
+    this.code = code
+    this.success = success
+    this.params = params
+    this.message = message
+    this.errorMsg = errorMsg
+  }
 }
+

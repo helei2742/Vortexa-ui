@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { useWebsocketStore } from '@/stores/useWebsocket.ts';
+import {WS_CONNECT_URL} from "@/config/vortexa-config.ts";
 
 const {websocketClient} = useWebsocketStore()
 
-websocketClient.connect()
+websocketClient.connect(WS_CONNECT_URL)
 
 </script>
 

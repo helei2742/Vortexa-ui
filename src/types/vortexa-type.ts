@@ -20,7 +20,16 @@ export class AccountBaseInfo {
                        params,
                        insertDatetime,
                        updateDatetime
-                     }) {
+                     }: {
+    id: number,
+    type: string,
+    name: string,
+    email: string,
+    password: string,
+    params: Map<string, object>,
+    insertDatetime: string,
+    updateDatetime: string
+  }) {
     this.id = id
     this.type = type
     this.name = name
@@ -54,11 +63,23 @@ export class TwitterInfo {
                        password,
                        email,
                        emailPassword,
+                       params,
                        token,
                        f2aKey,
                        insertDatetime,
                        updateDatetime
-                     }) {
+                     }: {
+    id: number,
+    username: string,
+    password: string,
+    email: string,
+    emailPassword: string,
+    params: Map<string, object>,
+    token: string,
+    f2aKey: string,
+    insertDatetime: string,
+    updateDatetime: string
+  }) {
     this.id = id
     this.username = username
     this.password = password
@@ -82,6 +103,7 @@ export class DiscordInfo {
   bindEmail: string
   bindEmailPassword: string
   token: string
+  f2aKey: string
   params: Map<string, object>
   insertDatetime: string
   updateDatetime: string
@@ -92,11 +114,23 @@ export class DiscordInfo {
                        password,
                        bindEmail,
                        bindEmailPassword,
+                       params,
                        token,
                        f2aKey,
                        insertDatetime,
                        updateDatetime
-                     }) {
+                     }:{
+    id:number,
+    username:string,
+    password:string,
+    bindEmail:string,
+    bindEmailPassword:string,
+    params:Map<string, object>,
+    token:string,
+    f2aKey:string,
+    insertDatetime:string,
+    updateDatetime:string
+  }) {
     this.id = id
     this.username = username
     this.password = password
@@ -136,7 +170,18 @@ export class ProxyInfo {
                        params,
                        insertDatetime,
                        updateDatetime
-                     }) {
+                     }:{
+    id:number,
+    host:string,
+    port:number,
+    username:string,
+    password:string,
+    proxyType:string,
+    proxyProtocol:string,
+    params:Map<string, object>,
+    insertDatetime:string,
+    updateDatetime:string
+  }) {
     this.id = id
     this.host = host
     this.port = port
@@ -166,7 +211,9 @@ export class BrowserEnv {
                        otherHeader,
                        insertDatetime,
                        updateDatetime
-                     }) {
+                     }:{
+    id:number, userAgent:string, otherHeader:Map<string, object>, insertDatetime:string, updateDatetime:string
+  }) {
     this.id = id
     this.userAgent = userAgent
     this.otherHeader = otherHeader

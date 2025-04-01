@@ -1,72 +1,90 @@
-// src/utils/WebSocketClient.js
-import ReconnectingWebSocket from 'reconnecting-websocket';
-import {
-  decodeRemotingCommand,
-  encodeRemotingCommand,
-  RemotingCommand
-} from "@/types/remoting_command_pb.ts";
-import type {WebsocketMessageHandler} from "@/types/vortexa-type-common.ts";
-
+import ReconnectingWebSocket from "reconnecting-websocket";
+import {WebSocketMessage} from "@/types/vortexa-type-common.ts";
+import * as Events from "reconnecting-websocket/events.ts";
 
 export class WebSocketClient {
   url: string
-  ws: ReconnectingWebSocket
-  messageHandlers: WebsocketMessageHandler[]
+  ws: ReconnectingWebSocket | undefined
+  messageHandlers: Map<number, WebsocketMessageHandler>
 
-  constructor(url) {
-    this.url = url;
-    this.ws = null;
-    this.messageHandlers = [];
-  }
-
-  serialize(message: RemotingCommand) {
-    console.log(message)
-    return encodeRemotingCommand(message)
-  }
-
-  deserialize = (data: Uint8Array): RemotingCommand => {
-    return decodeRemotingCommand(data)
+  constructor() {
+    this.ws = undefined
+    this.messageHandlers = new Map<number, WebsocketMessageHandler>();
   }
 
   // 连接 WebSocket
-  connect() {
+  connect(url: string): void {
     if (this.ws) this.ws.close();
+    this.url = url
 
-    this.ws = new ReconnectingWebSocket(this.url, null, {
+    this.ws = new ReconnectingWebSocket(url, undefined, {
       debug: true
     });
 
-    this.ws.onopen = () => console.log("✅ WebSocket 连接成功");
-    this.ws.onmessage = (event) => this.handleMessage(event);
-    this.ws.onerror = (error) => console.error("❌ WebSocket 错误:", error);
-    this.ws.onclose = () => console.log("🔌 WebSocket 已断开");
+    this.ws.onopen = () => {
+      console.log("✅ WebSocket 连接成功")
+      this.onOpen()
+    }
+    this.ws.onmessage = this.handleMessage
+    this.ws.onerror = ()=>{
+      console.error("❌ WebSocket 错误:", event)
+      this.onError()
+    }
+    this.ws.onclose = ()=>{
+      console.log("🔌 WebSocket 已断开");
+      this.onClose()
+    }
   }
 
   // 处理接收消息
-  handleMessage(event) {
-    const command: RemotingCommand = this.deserialize(event.data)
-    this.messageHandlers.forEach(handler => handler(command));
+  private handleMessage(event: MessageEvent): void {
+    if (event.data) {
+      const data = event.data
+      const message: WebSocketMessage = new WebSocketMessage(JSON.parse(data))
+      const code = message.code;
+      if (code) {
+        const handler= this.messageHandlers.get(code)
+        if (handler) {
+          handler.handle(message)
+        }
+      }
+    }
   }
 
   // 注册消息处理函数
-  onMessage(handler:WebsocketMessageHandler) {
-    this.messageHandlers.push(handler);
+  addMessageHandler(code: number, handler: WebsocketMessageHandler): void {
+    console.log('add message handler for ' + code)
+    this.messageHandlers.set(code, handler)
+  }
+
+  // 去除消息处理函数
+  removeMessageHandler(code: number): void {
+    this.messageHandlers.delete(code)
   }
 
   // 发送消息
-  send(message: RemotingCommand) {
+  send(message: WebSocketMessage): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(this.serialize(message));
+      console.log('send', message)
+      this.ws.send(JSON.stringify(message));
     } else {
       console.warn("🚫 WebSocket 未连接");
     }
   }
 
-  // 关闭 WebSocket
-  close() {
-    if (this.ws) {
-      this.ws.close();
-      this.ws = null;
-    }
+  onOpen(): void {
+
   }
+
+  onError(event: Events.ErrorEvent): void {
+
+  }
+
+  onClose(): void {
+
+  }
+}
+
+export interface WebsocketMessageHandler {
+  handle(message: WebSocketMessage): void
 }
