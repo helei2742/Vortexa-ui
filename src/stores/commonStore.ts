@@ -4,6 +4,7 @@ import type {BotInstanceInfo} from "@/types/vortexa-type.ts";
 import {useWebsocketStore} from "@/stores/useWebsocket.ts";
 import {SCRIPT_NODE_LOG} from "@/constants/websocket-constants.ts";
 import type {WebSocketMessage} from "@/types/vortexa-type-common.ts";
+import {WS_CONNECT_URL} from "@/config/vortexa-config.ts";
 
 export const useCommonStore = defineStore('common', () => {
   // 当前显示的的bot实例
@@ -28,6 +29,9 @@ export const useCommonStore = defineStore('common', () => {
   websocketClient.addMessageHandler(SCRIPT_NODE_LOG, message => {
     botInstanceLogList.value.push(message)
   })
+
+  websocketClient.connect(WS_CONNECT_URL)
+
 
   return { currentBotInstance, updateCurrentBotInstance, botDetailDrawerVisible, botInstanceLogList}
 })
