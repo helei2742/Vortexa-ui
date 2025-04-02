@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "axios": "^1.8.4",
+    "codemirror": "^5.65.19",
+    "codemirror-editor-vue3": "^2.8.0",
     "echarts": "^5.6.0",
     "lodash": "^4.17.21",
     "pinia": "^3.0.1",

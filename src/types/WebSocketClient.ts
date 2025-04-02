@@ -9,7 +9,7 @@ export class WebSocketClient {
 
   constructor() {
     this.ws = undefined
-    this.messageHandlers = new Map<number, (message) => void> ();
+    this.messageHandlers = new Map<number, (message) => void>();
   }
 
   // 连接 WebSocket
@@ -44,8 +44,9 @@ export class WebSocketClient {
       const data = event.data
       const message: WebSocketMessage = new WebSocketMessage(JSON.parse(data))
       const code = message.code;
+      console.log('ws-message', message)
       if (code) {
-        const handler:(message) => void = messageHandlers.get(code)
+        const handler: (message) => void = messageHandlers.get(code)
         if (handler) {
           handler(message)
         }
@@ -86,3 +87,4 @@ export class WebSocketClient {
 
   }
 }
+

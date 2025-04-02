@@ -8,7 +8,7 @@ import {BotInstanceStatus} from "@/config/vortexa-config.ts";
 import {pageQueryBotInstanceNetwork, startScriptJobNetwork} from "@/api/bot.ts";
 import {PageQuery, PageResult} from "@/types/vortexa-type-common.ts";
 import {ElMessage} from "element-plus";
-import BotDetailDrawer from "@/views/homepage/script/components/bot-detail-drawer.vue";
+
 
 const filters = ref<{
   status: BotInstanceStatus
@@ -85,14 +85,10 @@ const pageQueryBotInstance = () => {
 // 开始运行script的某个job
 const startScriptJob = (params) => {
   startScriptJobNetwork(params)
-    .then(response=>{
+    .then(response => {
       console.log('start script job', response)
     })
 }
-
-// 当前查看的bot详情
-const currentShowScript = ref<BotInstanceInfo>()
-
 
 const reload = () => {
   totalCount.value = 0
