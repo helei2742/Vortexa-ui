@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {Filter, RefreshRight} from '@element-plus/icons-vue'
-import BotRuntimeDisplayCard from "@/views/homepage/script/components/bot-runtime-display-card.vue";
+import BotRuntimeDisplayCard from "@/views/homepage/script-bot/components/bot-runtime-display-card.vue";
 import {BotInstanceInfo} from "@/types/vortexa-type.ts";
 import {onMounted, ref, nextTick, computed, reactive} from "vue";
 import ContentBlock from "@/components/content-block/content-block.vue";

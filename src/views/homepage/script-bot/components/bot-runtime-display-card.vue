@@ -7,7 +7,7 @@ import {stringToEnum} from "@/util/common.ts";
 import {useCommonStore} from "@/stores/commonStore.ts";
 import {BotInstanceStatus} from "@/config/vortexa-config.ts";
 import HorizontalScrollBar from "@/components/horizontal-scroll-bar/horizontal-scroll-bar.vue";
-import BotJobDetail from "@/views/homepage/script/components/bot-job-detail.vue";
+import BotJobDetail from "@/views/homepage/script-bot/components/bot-job-detail.vue";
 
 
 const props = defineProps<{

@@ -11,24 +11,30 @@
     popper-class="custom-popper"
   >
     <el-menu-item index="1" :class="verticalMode" @click="goTo('/dashboard')">
-      <el-icon>
-        <House/>
-      </el-icon>
+      <vortexa-icon name="dashboard" size="19"/>
       <span>Dashboard</span>
     </el-menu-item>
 
-    <el-menu-item index="2" :class="verticalMode" @click="goTo('/account')">
-      <vortexa-icon name="social" size="19"/>
+    <el-divider/>
 
-      <span>Account</span>
-    </el-menu-item>
+    <el-sub-menu index="2">
+      <template #title>
+        <span>Import</span>
+      </template>
+      <el-menu-item-group>
+        <el-menu-item index="2-1" :class="verticalMode" @click="goTo('/account')">
+          <vortexa-icon name="social" size="19"/>
+          <span>Account</span>
+        </el-menu-item>
 
-    <el-menu-item index="3" :class="verticalMode" @click="goTo('/environment')">
-      <el-icon>
-        <Compass/>
-      </el-icon>
-      <span>Environment</span>
-    </el-menu-item>
+        <el-menu-item index="2-2" :class="verticalMode" @click="goTo('/environment')">
+          <el-icon>
+            <Compass/>
+          </el-icon>
+          <span>Environment</span>
+        </el-menu-item>
+      </el-menu-item-group>
+    </el-sub-menu>
 
     <el-divider/>
 
@@ -105,5 +111,7 @@ const goTo = (path) => {
   border-right: none;
 }
 
-
+.vortexa-menu .el-divider {
+  margin: 9px 0;
+}
 </style>

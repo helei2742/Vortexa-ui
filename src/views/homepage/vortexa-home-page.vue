@@ -4,7 +4,7 @@ import {useCommonStore} from '@/stores/commonStore.ts'
 import VortexaMenu from "@/views/homepage/components/vortexa-menu/vortexa-menu.vue";
 import VortexaHeader from "@/views/homepage/components/vortexa-header/vortexa-header.vue";
 import VortexaBanner from "@/views/homepage/components/vortexa-banner-tool/vortexa-banner-tool.vue";
-import BotDetailDrawer from "@/views/homepage/script/components/bot-detail-drawer.vue";
+import BotDetailDrawer from "@/views/homepage/script-bot/components/bot-detail-drawer.vue";
 
 const isDesktop = ref(window.innerWidth > 780);
 
