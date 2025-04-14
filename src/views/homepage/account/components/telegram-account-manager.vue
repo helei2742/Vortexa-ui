@@ -8,7 +8,7 @@ const telegramAccountList = ref([])
 <template>
   <div>
     <dynamic-add-field-table
-      :headers="['id', 'name', 'password']"
+      :headers="['id', 'phone_prefix', 'phone']"
       id-field="id"
       :data="telegramAccountList"
     >

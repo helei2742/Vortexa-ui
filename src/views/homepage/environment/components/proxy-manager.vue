@@ -74,7 +74,7 @@ const deleteProxyInfo = (ids: Array<number>) => {
   <div>
     <dynamic-add-field-table
       ref="dataTable"
-      :headers="['id', 'proxyType', 'proxyProtocol', 'host', 'port']"
+      :headers="['id', 'host', 'port']"
       id-field="id"
       :data="proxyList"
       @page-query="pageQueryProxyInfo"

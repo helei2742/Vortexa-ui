@@ -119,17 +119,17 @@ export class DiscordInfo {
                        f2aKey,
                        insertDatetime,
                        updateDatetime
-                     }:{
-    id:number,
-    username:string,
-    password:string,
-    bindEmail:string,
-    bindEmailPassword:string,
-    params:Map<string, object>,
-    token:string,
-    f2aKey:string,
-    insertDatetime:string,
-    updateDatetime:string
+                     }: {
+    id: number,
+    username: string,
+    password: string,
+    bindEmail: string,
+    bindEmailPassword: string,
+    params: Map<string, object>,
+    token: string,
+    f2aKey: string,
+    insertDatetime: string,
+    updateDatetime: string
   }) {
     this.id = id
     this.username = username
@@ -170,17 +170,17 @@ export class ProxyInfo {
                        params,
                        insertDatetime,
                        updateDatetime
-                     }:{
-    id:number,
-    host:string,
-    port:number,
-    username:string,
-    password:string,
-    proxyType:string,
-    proxyProtocol:string,
-    params:Map<string, object>,
-    insertDatetime:string,
-    updateDatetime:string
+                     }: {
+    id: number,
+    host: string,
+    port: number,
+    username: string,
+    password: string,
+    proxyType: string,
+    proxyProtocol: string,
+    params: Map<string, object>,
+    insertDatetime: string,
+    updateDatetime: string
   }) {
     this.id = id
     this.host = host
@@ -211,8 +211,12 @@ export class BrowserEnv {
                        otherHeader,
                        insertDatetime,
                        updateDatetime
-                     }:{
-    id:number, userAgent:string, otherHeader:Map<string, object>, insertDatetime:string, updateDatetime:string
+                     }: {
+    id: number,
+    userAgent: string,
+    otherHeader: Map<string, object>,
+    insertDatetime: string,
+    updateDatetime: string
   }) {
     this.id = id
     this.userAgent = userAgent
@@ -318,4 +322,42 @@ export class BotInfo {
     this.insertDatetime = insertDatetime
     this.updateDatetime = updateDatetime
   }
+}
+
+
+/**
+ * 节点信息
+ */
+export class ScriptNode {
+  id: number
+  botGroup: string
+  description: string
+  params: Map<string, object>
+  insertDatetime: string
+  updateDatetime: string
+
+  constructor({id, botGroup, description, params, insertDatetime, updateDatetime}
+                : {
+                id?: number,
+                botGroup?: string,
+                params?: Map<string, object>,
+                insertDatetime?: string,
+                updateDatetime?: string
+              }
+  ) {
+    this.id = id
+    this.botGroup = botGroup
+    this.description = description
+    this.params = params
+    this.insertDatetime = insertDatetime
+    this.updateDatetime = updateDatetime
+  }
+}
+
+/**
+ * 已注册的script node 信息
+ */
+export class RegisteredScriptNode {
+  scriptNode: ScriptNode
+  online: boolean
 }

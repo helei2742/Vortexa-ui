@@ -4,6 +4,7 @@ import DashBoard from '@/views/homepage/dashboard/vortexa-dashboard-view.vue'
 import Account from '@/views/homepage/account/vortexa-account-view.vue'
 import Environment from '@/views/homepage/environment/vortexa-environment-view.vue'
 import Script from '@/views/homepage/script/vortexa-script-view.vue'
+import ScriptNode from '@/views/homepage/script/vortexa-script-node-view.vue'
 import Setting from '@/views/homepage/setting/vortexa-setting-view.vue'
 
 const routes = [
@@ -46,6 +47,14 @@ const routes = [
         component: Script,
         meta: {
           title: 'Script',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'script_node',
+        component: ScriptNode,
+        meta: {
+          title: 'ScriptNode',
           keepAlive: true
         }
       },
