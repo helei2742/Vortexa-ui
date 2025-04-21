@@ -330,24 +330,56 @@ export class BotInfo {
  */
 export class ScriptNode {
   id: number
-  botGroup: string
+  scriptNodeName: string
+  host: string
+  port: number
+  groupId: string
+  serviceId: string
+  instanceId: string
   description: string
+  botConfigMap: Map<string, object>
   params: Map<string, object>
   insertDatetime: string
   updateDatetime: string
 
-  constructor({id, botGroup, description, params, insertDatetime, updateDatetime}
+  constructor({
+                id,
+                scriptNodeName,
+                host,
+                port,
+                groupId,
+                serviceId,
+                instanceId,
+                description,
+                botConfigMap,
+                params,
+                insertDatetime,
+                updateDatetime
+              }
                 : {
-                id?: number,
-                botGroup?: string,
-                params?: Map<string, object>,
-                insertDatetime?: string,
-                updateDatetime?: string
+                id: number,
+                scriptNodeName: string,
+                host: string
+                port: number
+                groupId: string
+                serviceId: string
+                instanceId: string
+                description: string
+                botConfigMap: Map<string, object>
+                params: Map<string, object>,
+                insertDatetime: string,
+                updateDatetime: string
               }
   ) {
     this.id = id
-    this.botGroup = botGroup
+    this.scriptNodeName = scriptNodeName
+    this.host = host
+    this.port = port
+    this.groupId = groupId
+    this.serviceId = serviceId
+    this.instanceId = instanceId
     this.description = description
+    this.botConfigMap = botConfigMap
     this.params = params
     this.insertDatetime = insertDatetime
     this.updateDatetime = updateDatetime

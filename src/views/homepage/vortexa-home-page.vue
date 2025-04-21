@@ -5,12 +5,16 @@ import VortexaMenu from "@/views/homepage/components/vortexa-menu/vortexa-menu.v
 import VortexaHeader from "@/views/homepage/components/vortexa-header/vortexa-header.vue";
 import VortexaBanner from "@/views/homepage/components/vortexa-banner-tool/vortexa-banner-tool.vue";
 import BotDetailDrawer from "@/views/homepage/script-bot/components/bot-detail-drawer.vue";
+import {useWindowSizeStore} from '@/stores/windowSizeStore.ts'
 
 const isDesktop = ref(window.innerWidth > 780);
 
 const updateLayout = () => {
   isDesktop.value = window.innerWidth > 780
+  updateWindowSize(window.innerWidth, window.innerHeight)
 };
+
+const {updateWindowSize} = useWindowSizeStore()
 
 const {currentBotInstance} = useCommonStore()
 
