@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ArrowDown, Upload, Plus,CloseBold} from '@element-plus/icons-vue'
+import {ArrowDown, Upload, Plus, CloseBold, Refresh} from '@element-plus/icons-vue'
 import {computed, onMounted, reactive, ref, toRaw,} from "vue";
 import {ElMessage, ElMessageBox, type TableColumnCtx} from "element-plus";
 import * as XLSX from 'xlsx';
@@ -320,7 +320,9 @@ defineExpose({updatePageInfo, reload})
           @click="isCanUpdate = false"
           :disabled="tableUploadData.length < 1"
         >
-          <el-icon><CloseBold /></el-icon>
+          <el-icon>
+            <CloseBold/>
+          </el-icon>
           Cancel
         </el-button>
         <el-button
@@ -388,7 +390,7 @@ defineExpose({updatePageInfo, reload})
           </template>
         </el-table-column>
 
-        <el-table-column fixed="right" width="200">
+        <el-table-column fixed="right" width="120">
           <template #header>
             <el-button
               size="small"
@@ -407,7 +409,15 @@ defineExpose({updatePageInfo, reload})
               <el-icon>
                 <Plus/>
               </el-icon>
-              New Field
+            </el-button>
+            <el-button
+              size="small"
+              type="info"
+              @click="pageQueryTableData"
+            >
+              <el-icon>
+                <Refresh/>
+              </el-icon>
             </el-button>
           </template>
 

@@ -226,7 +226,56 @@ export class BrowserEnv {
   }
 }
 
+/**
+ * 钱包
+ */
+export class Web3Wallet {
+  id: number
+  mnemonic: string
+  ethPrivateKey: string
+  ethAddress: string
+  solPrivateKey: string
+  solAddress: string
+  btcPrivateKey: string
+  btcAddress: string
+  insertDatetime: string
+  updateDatetime: string
 
+  public constructor({
+                       id,
+                       mnemonic,
+                       ethPrivateKey,
+                       ethAddress,
+                       solPrivateKey,
+                       solAddress,
+                       btcPrivateKey,
+                       btcAddress,
+                       insertDatetime,
+                       updateDatetime
+                     }: {
+    id: number
+    mnemonic: string
+    ethPrivateKey: string
+    ethAddress: string
+    solPrivateKey: string
+    solAddress: string
+    btcPrivateKey: string
+    btcAddress: string
+    insertDatetime: string
+    updateDatetime: string
+  }) {
+    this.id = id
+    this.mnemonic = mnemonic
+    this.ethPrivateKey = ethPrivateKey
+    this.ethAddress = ethAddress
+    this.solPrivateKey = solPrivateKey
+    this.solAddress = solAddress
+    this.btcPrivateKey = btcPrivateKey
+    this.btcAddress = btcAddress
+    this.insertDatetime = insertDatetime
+    this.updateDatetime = updateDatetime
+  }
+}
 /**
  * Bot 实例信息
  */

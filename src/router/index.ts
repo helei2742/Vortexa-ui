@@ -3,6 +3,7 @@ import VortexaHomePage from "@/views/homepage/vortexa-home-page.vue"
 import DashBoard from '@/views/homepage/dashboard/vortexa-dashboard-view.vue'
 import Account from '@/views/homepage/account/vortexa-account-view.vue'
 import Environment from '@/views/homepage/environment/vortexa-environment-view.vue'
+import Wallet from '@/views/homepage/wallet/vortexa-wallet-view.vue'
 import Script from '@/views/homepage/script-bot/vortexa-script-view.vue'
 import ScriptNode from '@/views/homepage/script-node/vortexa-script-node-view.vue'
 import Setting from '@/views/homepage/setting/vortexa-setting-view.vue'
@@ -39,6 +40,14 @@ const routes = [
         component: Environment,
         meta: {
           title: 'Environment',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'wallet',
+        component: Wallet,
+        meta: {
+          title: 'Wallet',
           keepAlive: true
         }
       },

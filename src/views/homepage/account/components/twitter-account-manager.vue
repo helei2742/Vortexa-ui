@@ -23,6 +23,8 @@ const reload = () => {
 
 // 分页查询账户数据
 const pageQueryTwitterInfo = (query) => {
+  loading.value = true
+
   pageQueryTwitterNetwork(query)
     .then(response => {
       const pageResult = response.data;
