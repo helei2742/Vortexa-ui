@@ -8,6 +8,32 @@ import Script from '@/views/homepage/script-bot/vortexa-script-view.vue'
 import ScriptNode from '@/views/homepage/script-node/vortexa-script-node-view.vue'
 import Setting from '@/views/homepage/setting/vortexa-setting-view.vue'
 
+import VortexaIntroduce from "@/views/homepage/introduce/vortexa-introduce.vue";
+import BotDetail from '@/views/homepage/script-bot-detail/script-bot-detail.vue'
+
+export const hiddenHomePageRoutes = [
+  {
+    path: 'introduce',
+    component: VortexaIntroduce,
+    name: 'introduce',
+    meta: {
+      title: 'Introduce',
+      keepAlive: true,
+      hidden: true
+    }
+  },
+  {
+    path: 'bot_detail',
+    component: BotDetail,
+    name: 'bot_detail',
+    meta: {
+      title: 'BotDetail',
+      keepAlive: true,
+      hidden: true
+    }
+  }
+]
+
 const routes = [
   {
     path: '/',
@@ -75,6 +101,7 @@ const routes = [
           keepAlive: true
         }
       },
+      ...hiddenHomePageRoutes
     ]
   },
 ]

@@ -11,15 +11,12 @@ export const useCommonStore = defineStore('common', () => {
   const currentBotInstance: Ref<BotInstanceInfo> = ref<BotInstanceInfo>(new BotInstanceInfo({}))
 
   // 更新当前bot实例
-  const updateCurrentBotInstance = (botInstance: BotInstanceInfo, visible: boolean) => {
+  const updateCurrentBotInstance = (botInstance: BotInstanceInfo) => {
     console.log('update current bot instance')
     botInstanceLogList.value = []
     currentBotInstance.value = botInstance
-    botDetailDrawerVisible.value = visible
   }
 
-  // botDetail 是否能打开
-  const botDetailDrawerVisible = ref(false)
 
   // 存放日志
   const botInstanceLogList = ref<Array<WebSocketMessage>>([])
@@ -38,11 +35,9 @@ export const useCommonStore = defineStore('common', () => {
 
   websocketClient.connect(WS_CONNECT_URL)
 
-
   return {
     currentBotInstance,
     updateCurrentBotInstance,
-    botDetailDrawerVisible,
     botInstanceLogList,
     botInstanceLogAppendHandler
   }

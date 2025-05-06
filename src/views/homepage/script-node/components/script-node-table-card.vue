@@ -10,10 +10,10 @@ defineProps<{
 const {addWindowSizeChangeHandler} = useWindowSizeStore();
 const descriptionsColumn = ref(3)
 
-const emit = defineEmits(['openBotConfig'])
+const emit = defineEmits(['openBotDetail'])
 
-const openBotConfig = (botKey, botConfig)=>{
-  emit('openBotConfig', botKey, botConfig)
+const openBotConfig = (scriptNodeName, botKey)=>{
+  emit('openBotDetail', scriptNodeName, botKey)
 }
 
 onMounted(()=>{
@@ -64,14 +64,14 @@ onMounted(()=>{
       </el-descriptions-item>
       <el-descriptions-item
         label-class-name="cell-item-2"
-        v-for="(config, botKey, index) in scriptNode.botConfigMap" :key="botKey"
+        v-for="(botKey, index) in scriptNode.managedBotKeyList" :key="botKey"
       >
         <template #label>
           <div class="cell-item">
             Deploy Bot: {{index + 1}}
           </div>
         </template>
-        <el-link @click="openBotConfig(botKey, config)">
+        <el-link @click="openBotConfig(scriptNode.scriptNodeName, botKey)">
           {{botKey}}
         </el-link>
       </el-descriptions-item>

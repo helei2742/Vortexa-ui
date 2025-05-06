@@ -1,19 +1,25 @@
 <script setup lang="ts">
 import {MoreFilled, Refresh} from "@element-plus/icons-vue"
 import ContentBlock from "@/components/content-block/content-block.vue";
-import {queryAllRegisteredScriptNode} from "@/api/script-node.ts";
+import {queryAllRegisteredScriptNodeNetwork} from "@/api/script-node.ts";
 import {onMounted, ref} from "vue";
-import type {RegisteredScriptNode} from "@/types/vortexa-type.ts";
-import ScriptNodeTableCard
-  from "@/views/homepage/script-node/components/script-node-table-card.vue";
-import ScriptNodeBotConfigDialog
-  from "@/views/homepage/script-node/components/script-node-bot-config-dialog.vue";
+import {ScriptNode} from "@/types/vortexa-type.ts";
+import ScriptNodeTableCard from "@/views/homepage/script-node/components/script-node-table-card.vue";
+import {usePageTabStore} from "@/stores/usePageTabSrore.ts";
 
 const scriptNodeList = ref()
-const botConfigDialog = ref()
 
-const openBotConfigHandler = (botKey, config) => {
-  botConfigDialog.value.openDialog(botKey, config)
+const {routeToHiddenPage} = usePageTabStore()
+
+const openBotDetailHandler = (scriptNodeName, botKey) => {
+  routeToHiddenPage({
+    path: 'bot_detail',
+    id: botKey,
+    payload: {
+      scriptNodeName,
+      botKey
+    }
+  })
 }
 
 const scriptNodeStatus = ({row, rowIndex}) => {
@@ -24,8 +30,8 @@ const scriptNodeStatus = ({row, rowIndex}) => {
   }
 }
 
-const ipTagName = (registeredScriptNode: RegisteredScriptNode) => {
-  if (registeredScriptNode.online) {
+const ipTagName = (scriptNode: ScriptNode) => {
+  if (scriptNode.online) {
     return 'success'
   } else {
     return 'info'
@@ -33,15 +39,19 @@ const ipTagName = (registeredScriptNode: RegisteredScriptNode) => {
 }
 
 // 查询全部
-const queryAllRegisteredScriptNodeNetwork = () => {
-  queryAllRegisteredScriptNode().then(result => {
-    console.log(result)
+const queryAllRegisteredScriptNode = () => {
+  queryAllRegisteredScriptNodeNetwork().then(result => {
     scriptNodeList.value = result.data
   })
 }
 
+// 刷新
+const handleRefresh = () => {
+  queryAllRegisteredScriptNode()
+}
+
 onMounted(async () => {
-  queryAllRegisteredScriptNodeNetwork()
+  queryAllRegisteredScriptNode()
 })
 </script>
 
@@ -61,47 +71,47 @@ onMounted(async () => {
         <el-table-column type="expand">
           <template #default="props">
             <script-node-table-card
-              @open-bot-config="openBotConfigHandler"
-              :script-node="props.row.scriptNode"
+              @open-bot-detail="openBotDetailHandler"
+              :script-node="props.row"
             />
           </template>
         </el-table-column>
 
         <el-table-column label="nodeName" sortable min-width="160">
           <template #default="scope">
-            {{ scope.row.scriptNode.scriptNodeName }}
+            {{ scope.row.scriptNodeName }}
           </template>
         </el-table-column>
         <el-table-column label="groupId" sortable min-width="160">
           <template #default="scope">
-            {{ scope.row.scriptNode.groupId }}
+            {{ scope.row.groupId }}
           </template>
         </el-table-column>
         <el-table-column prop="serviceId" sortable label="ServiceId" min-width="160">
           <template #default="scope">
-            {{ scope.row.scriptNode.serviceId }}
+            {{ scope.row.serviceId }}
           </template>
         </el-table-column>
         <el-table-column prop="instanceId" sortable label="InstanceId" min-width="160">
           <template #default="scope">
-            {{ scope.row.scriptNode.instanceId }}
+            {{ scope.row.instanceId }}
           </template>
         </el-table-column>
         <el-table-column label="ip" sortable min-width="160">
           <template #default="scope">
             <el-tag :type="ipTagName(scope.row)">
-              {{ scope.row.scriptNode.host + ':' + scope.row.scriptNode.port }}
+              {{ scope.row.host + ':' + scope.row.port }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="bot count" sortable min-width="160">
           <template #default="scope">
-            {{ Object.keys(scope.row.scriptNode.botConfigMap).length }}
+            {{ scope.row.managedBotKeyList.length }}
           </template>
         </el-table-column>
         <el-table-column fixed="right" width="90">
           <template #header>
-            <el-button :icon="Refresh" plain type="success"></el-button>
+            <el-button :icon="Refresh" plain type="success" @click="handleRefresh"></el-button>
           </template>
           <template #default="scope">
             <el-dropdown placement="bottom-end">
@@ -132,8 +142,6 @@ onMounted(async () => {
         </el-table-column>
       </el-table>
     </div>
-
-    <script-node-bot-config-dialog ref="botConfigDialog"/>
   </content-block>
 </template>
 

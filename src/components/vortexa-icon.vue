@@ -32,4 +32,7 @@ const iconStyle = computed(() => ({
   display: inline-block;
   margin: 0 5px;
 }
+.el-button  .custom-icon {
+  margin: 0 !important;
+}
 </style>

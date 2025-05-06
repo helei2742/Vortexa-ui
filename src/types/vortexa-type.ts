@@ -1,3 +1,25 @@
+export class BotInstanceAccount {
+  id?: number;
+  botId?: number;
+  botKey?: string;
+  accountBaseInfoId?: number;
+  twitterId?: number;
+  discordId?: number;
+  proxyId?: number;
+  browserEnvId?: number;
+  telegramId?: number;
+  walletId?: number;
+  rewardId?: number;
+  status?: number; // 0 表示初始状态，1 表示已注册
+  params?: Record<string, never>; // Map<String, Object> 转成 Record<string, any>
+  insertDatetime?: string; // LocalDateTime 通常转成 ISO 字符串
+  updateDatetime?: string;
+
+  constructor(data: Partial<BotInstanceAccount> = {}) {
+    Object.assign(this, data);
+  }
+}
+
 /**
  * 基础账户信息
  */
@@ -276,6 +298,75 @@ export class Web3Wallet {
     this.updateDatetime = updateDatetime
   }
 }
+
+export enum JobType {
+  /** 查询奖励 */
+  QUERY_REWARD = 'QUERY_REWARD',
+
+  /** 只运行一次的任务 */
+  ONCE_TASK = 'ONCE_TASK',
+
+  /** 定时任务 */
+  TIMED_TASK = 'TIMED_TASK',
+
+  /** WebSocket 连接任务 */
+  WEB_SOCKET_CONNECT = 'WEB_SOCKET_CONNECT',
+
+  /** 按账户拆分后的 JOB */
+  ACCOUNT_SPLIT_JOB = 'ACCOUNT_SPLIT_JOB',
+}
+
+export interface AutoBotJobWSParam {
+  reconnectCountDownSecond: number
+  isRefreshWSConnection: boolean
+  heartBeatIntervalSecond: number
+  wsConnectCount: number
+  wsUnlimitedRetry: boolean
+  nioEventLoopGroupThreads: number
+  reconnectLimit: number
+}
+
+export class AutoBotJobParams {
+  cronExpression: string
+  intervalInSecond: number
+  jobName: string
+  autoBotJobWSParam: AutoBotJobWSParam
+  uniqueAccount: boolean
+  description: string
+  concurrentCount: number
+  syncExecute: boolean
+  jobType: JobType
+  params: Map<string, object>
+  dynamicTimeWindowMinute: number
+  dynamicTrigger: boolean
+
+  constructor(data: {
+    cronExpression: string
+    jobName: string
+    autoBotJobWSParam: AutoBotJobWSParam
+    uniqueAccount: boolean
+    description: string
+    concurrentCount: number
+    syncExecute: boolean
+    jobType: JobType
+    params: Map<string, object>
+    dynamicTimeWindowMinute: number
+    dynamicTrigger: boolean
+  }) {
+    this.cronExpression = data.cronExpression
+    this.jobName = data.jobName
+    this.autoBotJobWSParam = data.autoBotJobWSParam
+    this.uniqueAccount = data.uniqueAccount
+    this.description = data.description
+    this.concurrentCount = data.concurrentCount
+    this.syncExecute = data.syncExecute
+    this.jobType = data.jobType
+    this.params = data.params
+    this.dynamicTimeWindowMinute = data.dynamicTimeWindowMinute
+    this.dynamicTrigger = data.dynamicTrigger
+  }
+}
+
 /**
  * Bot 实例信息
  */
@@ -283,11 +374,12 @@ export class BotInstanceInfo {
   id?: number
   botId?: number
   botName: string
+  scriptNodeName: string
   botKey: string
   botStatus: number // 0 未运行 1 正在运行 -1 告警
   runningTask: Array<string>
   accountTableName?: string
-  jobParams: Map<string, object>
+  jobParams: Map<string, AutoBotJobParams>
   params: Map<string, object>
   insertDatetime?: string
   updateDatetime?: string
@@ -297,6 +389,7 @@ export class BotInstanceInfo {
                        id,
                        botId,
                        botName,
+                       scriptNodeName,
                        botKey,
                        botStatus,
                        runningTask,
@@ -311,6 +404,7 @@ export class BotInstanceInfo {
                        id?: number,
                        botId?: number,
                        botName?: string,
+                       scriptNodeName?: string,
                        botKey?: string,
                        botStatus?: number,
                        runningTask?: Array<string>,
@@ -325,6 +419,7 @@ export class BotInstanceInfo {
     this.id = id
     this.botId = botId
     this.botName = botName ? botName : 'unknown_bot'
+    this.scriptNodeName = scriptNodeName
     this.botKey = botKey ? botKey : 'unknown_instance'
     this.botStatus = botStatus !== undefined ? botStatus : -1
     this.runningTask = runningTask ? runningTask : new Array<string>()
@@ -334,6 +429,107 @@ export class BotInstanceInfo {
     this.insertDatetime = insertDatetime
     this.updateDatetime = updateDatetime
     this.botInfo = botInfo
+  }
+}
+
+/**
+ * 实例详情
+ */
+export class BotInstanceDetail extends BotInstanceInfo {
+  botLaunchConfig: string
+  botInstance: BotInstanceInfo
+  botInfo: BoInfo
+  jobTriggers: Map<string, Array<JobTrigger>>
+  online: boolean
+
+  public constructor({
+                       botLaunchConfig,
+                       botInstance,
+                       botInfo,
+                       jobTriggers,
+                       online
+                     }: {
+    botLaunchConfig: string
+    botInstance: BotInstanceInfo
+    botInfo: BoInfo
+    jobTriggers: Map<string, Array<JobTrigger>>
+    online: boolean
+  }) {
+    this.botLaunchConfig = botLaunchConfig
+    this.botInstance = botInstance
+    this.botInfo = botInfo
+    this.jobTriggers = jobTriggers
+    this.online = online
+  }
+}
+
+export enum JobStatus {
+  NONE = 'NONE',
+  NORMAL = 'NORMAL',
+  PAUSED = 'PAUSED',
+  COMPLETE = 'COMPLETE',
+  ERROR = 'ERROR',
+  BLOCKED = 'BLOCKED'
+}
+
+export class JobTrigger {
+  jobName: string
+  misfireInstruction: number
+  nextFireTime: number
+  fullName: string
+  jobKey: {
+    name: string
+    group: string
+  }
+  jobGroup: string
+  priority: number
+  timesTriggered: number
+  fullJobName: string
+  name: string
+  repeatInterval: number
+  previousFireTime: number
+  startTime: number
+  group: string
+  repeatCount: number
+  jobStatus: JobStatus
+
+  constructor(data: {
+    jobName: string
+    misfireInstruction: number
+    nextFireTime: number
+    fullName: string
+    jobKey: {
+      name: string
+      group: string
+    }
+    jobGroup: string
+    priority: number
+    timesTriggered: number
+    fullJobName: string
+    name: string
+    repeatInterval: number
+    previousFireTime: number
+    startTime: number
+    group: string
+    repeatCount: number
+    jobStatus: JobStatus
+  }) {
+    this.jobName = data.jobName
+    this.misfireInstruction = data.misfireInstruction
+    this.nextFireTime = data.nextFireTime
+    this.fullName = data.fullName
+    this.jobKey = data.jobKey
+    this.jobGroup = data.jobGroup
+    this.priority = data.priority
+    this.timesTriggered = data.timesTriggered
+    this.fullJobName = data.fullJobName
+    this.name = data.name
+    this.repeatInterval = data.repeatInterval
+    this.previousFireTime = data.previousFireTime
+    this.startTime = data.startTime
+    this.group = data.group
+    this.repeatCount = data.repeatCount
+    this.jobStatus = data.jobStatus
   }
 }
 
@@ -386,8 +582,8 @@ export class ScriptNode {
   serviceId: string
   instanceId: string
   description: string
-  botConfigMap: Map<string, object>
-  params: Map<string, object>
+  managedBotKeyList: Array<string>
+  online: boolean
   insertDatetime: string
   updateDatetime: string
 
@@ -400,8 +596,8 @@ export class ScriptNode {
                 serviceId,
                 instanceId,
                 description,
-                botConfigMap,
-                params,
+                managedBotKeyList,
+                online,
                 insertDatetime,
                 updateDatetime
               }
@@ -414,8 +610,8 @@ export class ScriptNode {
                 serviceId: string
                 instanceId: string
                 description: string
-                botConfigMap: Map<string, object>
-                params: Map<string, object>,
+                managedBotKeyList: Array<string>
+                online: boolean,
                 insertDatetime: string,
                 updateDatetime: string
               }
@@ -428,8 +624,8 @@ export class ScriptNode {
     this.serviceId = serviceId
     this.instanceId = instanceId
     this.description = description
-    this.botConfigMap = botConfigMap
-    this.params = params
+    this.managedBotKeyList = managedBotKeyList
+    this.online = online
     this.insertDatetime = insertDatetime
     this.updateDatetime = updateDatetime
   }

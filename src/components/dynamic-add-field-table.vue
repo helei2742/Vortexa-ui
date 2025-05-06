@@ -12,8 +12,9 @@ const emit = defineEmits(['page-query', 'update-data', 'delete-data'])
 
 interface Props {
   headers: string[],
+  filterFields?: string[]
   idField: string,
-  data: object[]
+  data: object[],
 }
 
 const props = defineProps<Props>();
@@ -58,7 +59,15 @@ const extraFieldList = computed(() => {
   const extraField = new Set<string>()
   tableDataList.value.forEach(item => {
     const keys: string[] = Object.keys(item);
-    keys.forEach(key => extraField.add(key))
+    keys.forEach(key => {
+      if (props.filterFields) {
+        if (props.filterFields.indexOf(key) === -1) {
+          extraField.add(key)
+        }
+      } else {
+        extraField.add(key)
+      }
+    })
   })
   props.headers.forEach(key => {
     extraField.delete(key)
@@ -377,6 +386,7 @@ defineExpose({updatePageInfo, reload})
           :filters="getFieldValueList(item)"
           :filter-method="filterHandler"
           :min-width="getColumnWidth(item)"
+          sortable
         >
           <template #default="scope">
             <el-input
@@ -392,33 +402,32 @@ defineExpose({updatePageInfo, reload})
 
         <el-table-column fixed="right" width="120">
           <template #header>
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete"
-              v-if="multipleSelection.length > 0"
-            >
-              Delete
-            </el-button>
-            <el-button
-              size="small"
-              type="primary"
-              @click="newFieldDialogVisible = true"
-              v-else
-            >
-              <el-icon>
-                <Plus/>
-              </el-icon>
-            </el-button>
-            <el-button
-              size="small"
-              type="info"
-              @click="pageQueryTableData"
-            >
-              <el-icon>
-                <Refresh/>
-              </el-icon>
-            </el-button>
+            <div v-if="multipleSelection.length > 0">
+              <el-button
+                size="small"
+                type="danger"
+                @click="handleDelete"
+              >
+                Delete
+              </el-button>
+            </div>
+            <div v-else>
+              <el-button
+                size="small"
+                type="primary"
+                @click="newFieldDialogVisible = true"
+
+              >
+                <el-icon><Plus/></el-icon>
+              </el-button>
+              <el-button
+                size="small"
+                type="info"
+                @click="pageQueryTableData"
+              >
+                <el-icon><Refresh/></el-icon>
+              </el-button>
+            </div>
           </template>
 
           <template #default="scope">

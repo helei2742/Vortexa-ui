@@ -95,3 +95,18 @@ export class WebSocketMessage {
   }
 }
 
+
+export class PageTabInfo {
+  path: string
+  id: string
+  payload: object
+  constructor({path, id, payload}: {
+    path: string
+    id: string,
+    payload: object,
+  }) {
+    this.path = path
+    this.id = id
+    this.payload = payload
+  }
+}

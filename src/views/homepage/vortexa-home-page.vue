@@ -6,6 +6,7 @@ import VortexaHeader from "@/views/homepage/components/vortexa-header/vortexa-he
 import VortexaBanner from "@/views/homepage/components/vortexa-banner-tool/vortexa-banner-tool.vue";
 import BotDetailDrawer from "@/views/homepage/script-bot/components/bot-detail-drawer.vue";
 import {useWindowSizeStore} from '@/stores/windowSizeStore.ts'
+import RouterTab from "@/components/router-tab/router-tab.vue";
 
 const isDesktop = ref(window.innerWidth > 780);
 
@@ -37,14 +38,17 @@ onUnmounted(() => {
         </div>
 
         <div class="vortexa-main">
+          <div style="width: 100%;" >
           <vortexa-header style="margin-bottom: 14px"/>
-
-          <router-view v-slot="{ Component, route }">
-            <keep-alive>
-              <component v-if="route.meta.keepAlive" :is="Component" :key="route.fullPath"/>
-            </keep-alive>
-            <component v-if="!route.meta.keepAlive" :is="Component" :key="route.fullPath"/>
-          </router-view>
+            <router-tab>
+              <router-view v-slot="{ Component, route }">
+                <keep-alive>
+                  <component v-if="route.meta.keepAlive" :is="Component" :key="route.fullPath"/>
+                </keep-alive>
+                <component v-if="!route.meta.keepAlive" :is="Component" :key="route.fullPath"/>
+              </router-view>
+            </router-tab>
+          </div>
         </div>
       </div>
 
@@ -74,6 +78,8 @@ onUnmounted(() => {
 
 .vortexa-main {
   flex: 1;
+  display: flex;
+  min-width: 0;
 }
 
 .bottom-menu {

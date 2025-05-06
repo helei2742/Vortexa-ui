@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import "codemirror/mode/javascript/javascript.js";
 import Codemirror, {createLinkMark, createLogMark, createTitle} from "codemirror-editor-vue3";
 import {useCommonStore} from "@/stores/commonStore.ts";
 import {useWebsocketStore} from "@/stores/useWebsocket.ts";

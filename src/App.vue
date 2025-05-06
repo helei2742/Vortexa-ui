@@ -13,6 +13,28 @@
 
 }
 
+.fancy-border {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #eff6ed, #e2f0e0); /* 浅绿色渐变背景 */
+  box-shadow:
+    4px 4px 10px rgba(0, 0, 0, 0.1),   /* 阴影 */
+    -4px -4px 10px rgba(255, 255, 255, 0.7); /* 高光 */
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+.fancy-border:hover {
+  box-shadow:
+    2px 2px 8px rgba(0, 0, 0, 0.15),
+    -2px -2px 8px rgba(255, 255, 255, 0.6);
+}
+
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
 .button-neutral {
   background-color: #f5f5f5 !important;
   color: #333333 !important;

@@ -30,3 +30,11 @@ export function generateRandomGreenColor(): string {
   const b = Math.floor(Math.random() * 100);
   return `rgb(${r}, ${g}, ${b})`
 }
+
+export function toLocalDatetimeStr(timestamp:number) : string {
+  return new Date(timestamp).toLocaleString()
+}
+
+export function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
