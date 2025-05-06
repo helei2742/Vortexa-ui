@@ -3,22 +3,25 @@ import type {ScriptNode} from "@/types/vortexa-type.ts";
 import {onMounted, ref} from "vue";
 import {useWindowSizeStore} from "@/stores/windowSizeStore.ts";
 
-defineProps<{
+const props = defineProps<{
   scriptNode: ScriptNode
 }>();
 
 const {addWindowSizeChangeHandler} = useWindowSizeStore();
 const descriptionsColumn = ref(3)
 
-const emit = defineEmits(['openBotDetail'])
+const emit = defineEmits(['openBotDetail', 'openScriptNodeDetail'])
 
 const openBotConfig = (scriptNodeName, botKey)=>{
   emit('openBotDetail', scriptNodeName, botKey)
 }
 
+const openScriptNodeDetailHandle = () => {
+  emit('openScriptNodeDetail', props.scriptNode.scriptNodeName)
+}
+
 onMounted(()=>{
   addWindowSizeChangeHandler((w, h)=>{
-    console.log(w)
     if (w < 900) descriptionsColumn.value = 1
     else if (w < 1400) descriptionsColumn.value = 2
     else descriptionsColumn.value = 3
@@ -36,7 +39,9 @@ onMounted(()=>{
       :label-width="120"
     >
       <template #extra>
-        <el-button type="primary">Operation</el-button>
+        <el-button class="button-morandi" @click="openScriptNodeDetailHandle">
+          Detail
+        </el-button>
       </template>
       <el-descriptions-item>
         <template #label>

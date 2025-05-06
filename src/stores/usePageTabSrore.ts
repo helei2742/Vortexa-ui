@@ -13,12 +13,12 @@ export const usePageTabStore = defineStore('pageTab', () => {
   const currentPage: Ref<PageTabInfo | null> = ref(null)
 
   // 路由到隐藏页
-  const routeToHiddenPage = ({path, id, payload}) => {
+  const routeToHiddenPage = ({path, id, payload, icon}) => {
     let indexOf = pageList.value.findIndex(item => item.path === path && item.id === id)
     console.log('route payload', indexOf, pageList.value)
 
     if (indexOf === -1) {
-      const pageTab = new PageTabInfo({path, id, payload})
+      const pageTab = new PageTabInfo({path, id, payload, icon})
       pageList.value.push(pageTab)
       indexOf = pageList.value.length - 1
     }

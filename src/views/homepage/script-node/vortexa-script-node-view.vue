@@ -5,24 +5,11 @@ import {queryAllRegisteredScriptNodeNetwork} from "@/api/script-node.ts";
 import {onMounted, ref} from "vue";
 import {ScriptNode} from "@/types/vortexa-type.ts";
 import ScriptNodeTableCard from "@/views/homepage/script-node/components/script-node-table-card.vue";
-import {usePageTabStore} from "@/stores/usePageTabSrore.ts";
+import {openBotInstanceDetail, openScriptNodeDetail} from "@/router/route-jump-methods.ts";
 
 const scriptNodeList = ref()
 
-const {routeToHiddenPage} = usePageTabStore()
-
-const openBotDetailHandler = (scriptNodeName, botKey) => {
-  routeToHiddenPage({
-    path: 'bot_detail',
-    id: botKey,
-    payload: {
-      scriptNodeName,
-      botKey
-    }
-  })
-}
-
-const scriptNodeStatus = ({row, rowIndex}) => {
+const scriptNodeStatus = ({row}) => {
   if (row.online) {
     return 'script-node-online'
   } else {
@@ -71,7 +58,8 @@ onMounted(async () => {
         <el-table-column type="expand">
           <template #default="props">
             <script-node-table-card
-              @open-bot-detail="openBotDetailHandler"
+              @open-script-node-detail="openScriptNodeDetail"
+              @open-bot-detail="openBotInstanceDetail"
               :script-node="props.row"
             />
           </template>
@@ -79,7 +67,9 @@ onMounted(async () => {
 
         <el-table-column label="nodeName" sortable min-width="160">
           <template #default="scope">
-            {{ scope.row.scriptNodeName }}
+            <el-link  @click="openScriptNodeDetail(scope.row.scriptNodeName)">
+              {{ scope.row.scriptNodeName }}
+            </el-link>
           </template>
         </el-table-column>
         <el-table-column label="groupId" sortable min-width="160">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {Calendar, DCaret} from '@element-plus/icons-vue'
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 
 const calenderVisible = ref(false)
 
@@ -8,9 +8,12 @@ const today = ref(new Date())
 
 
 const currentTime = ref(new Date())
-setInterval(() => {
-  currentTime.value = new Date();
-}, 1000);
+
+onMounted(()=>{
+  // setInterval(() => {
+  //   currentTime.value = new Date();
+  // }, 1000);
+})
 </script>
 
 <template>

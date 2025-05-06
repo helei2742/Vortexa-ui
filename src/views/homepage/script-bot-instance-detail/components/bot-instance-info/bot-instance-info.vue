@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {BotInfo, type BotInstanceInfo} from "@/types/vortexa-type.ts";
 import BotJobInfoCapsule
-  from "@/views/homepage/script-bot-detail/components/bot-instance-info/components/bot-job-info-capsule.vue";
+  from "@/views/homepage/script-bot-instance-detail/components/bot-instance-info/components/bot-job-info-capsule.vue";
 import {toLocalDatetimeStr} from "@/util/common.ts";
 import {onMounted, ref, watch} from "vue";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@/api/script-node.ts";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {BotInstanceStatus} from "@/config/vortexa-config.ts";
+import {openScriptNodeDetail} from "@/router/route-jump-methods.ts";
 
 const props = defineProps<{
   botInfo: BotInfo
@@ -178,7 +179,11 @@ onMounted(() => {
           {{ botInstance.botName }}
         </el-descriptions-item>
         <el-descriptions-item label="scriptNodeName">
-          {{ botInstance.scriptNodeName }}
+          <el-link style=" text-decoration: underline !important;"
+                   @click="openScriptNodeDetail(botInstance.scriptNodeName)"
+          >
+            {{ botInstance.scriptNodeName }}
+          </el-link>
         </el-descriptions-item>
         <el-descriptions-item label="botKey">
           {{ botInstance.botKey }}
@@ -191,8 +196,8 @@ onMounted(() => {
         <el-descriptions-item label="updateDatetime" :span="2">
           {{ toLocalDatetimeStr(botInstance.updateDatetime) }}
         </el-descriptions-item>
-        <el-descriptions-item v-if="botInfo.describe" label="describe" :span="4">
-          {{ botInfo.describe }}
+        <el-descriptions-item label="describe" :span="4">
+          {{ botInfo.describe ? botInfo.describe : '_' }}
         </el-descriptions-item>
       </el-descriptions>
     </div>

@@ -100,7 +100,8 @@ export class PageTabInfo {
   path: string
   id: string
   payload: object
-  constructor({path, id, payload}: {
+  icon: string
+  constructor({path, id, payload, icon}: {
     path: string
     id: string,
     payload: object,
@@ -108,5 +109,6 @@ export class PageTabInfo {
     this.path = path
     this.id = id
     this.payload = payload
+    this.icon = icon
   }
 }

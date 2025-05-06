@@ -5,6 +5,7 @@ import {generateStartLogMessage, SCRIPT_NODE_LOG} from "@/constants/websocket-co
 import VortexaTerminal from "@/components/terminal/vortexa-terminal.vue";
 import VortexaIcon from "@/components/vortexa-icon.vue";
 import ContentBlock from "@/components/content-block/content-block.vue";
+import {FullScreen} from "@element-plus/icons-vue";
 
 const props = defineProps<{
   scriptNodeName: string
@@ -32,19 +33,9 @@ onMounted(() => {
 
 <template>
   <content-block>
-    <template #header>
-      <div class="clearfix">
-        <el-button
-          style="float: right"
-          @click="sendStartLogMessage"
-          text
-        >
-          <vortexa-icon name="start-log" size="18"/>
-        </el-button>
-      </div>
-    </template>
     <vortexa-terminal
       ref="botTerminal"
+      @start-handle="sendStartLogMessage"
       start-print-str="please click start button to load runtime log"
     />
   </content-block>

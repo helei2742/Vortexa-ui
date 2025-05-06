@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {computed, onMounted, type Ref, ref, watch} from 'vue';
+import {onMounted, type Ref, ref, watch} from 'vue';
 import {useRoute} from 'vue-router';
 import {queryBotInstanceNetwork} from "@/api/bot.ts";
 import {BotInstanceDetail} from "@/types/vortexa-type.ts";
-import BotInstanceInfo from "@/views/homepage/script-bot-detail/components/bot-instance-info/bot-instance-info.vue";
+import BotInstanceInfo from "@/views/homepage/script-bot-instance-detail/components/bot-instance-info/bot-instance-info.vue";
 import ContentBlock from "@/components/content-block/content-block.vue";
 import BotInstanceExtraInfo
-  from "@/views/homepage/script-bot-detail/components/bot-instance-extra-info/bot-instance-extra-info.vue";
+  from "@/views/homepage/script-bot-instance-detail/components/bot-instance-extra-info/bot-instance-extra-info.vue";
 
 const route = useRoute()
 

@@ -1,5 +1,5 @@
 import request from '@/util/request.ts'
-import {ScriptNode} from "@/types/vortexa-type.ts";
+import {ScriptNode, ScriptNodeDetail} from "@/types/vortexa-type.ts";
 import type {Result} from "@/types/vortexa-type-common.ts";
 
 /**
@@ -9,6 +9,17 @@ import type {Result} from "@/types/vortexa-type-common.ts";
 export function queryAllRegisteredScriptNodeNetwork(): Promise<Result<Array<ScriptNode>>> {
   return request({
     url: '/script-node/all',
+    method: 'post'
+  })
+}
+
+/**
+ * 查询script node detail
+ * @returns {*}
+ */
+export function queryScriptNodeDetailNetwork(scriptNodeName:string): Promise<Result<ScriptNodeDetail>> {
+  return request({
+    url: '/script-node/detail/' + scriptNodeName,
     method: 'post'
   })
 }

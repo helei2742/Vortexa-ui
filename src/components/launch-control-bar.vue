@@ -3,9 +3,9 @@ import VortexaIcon from "@/components/vortexa-icon.vue";
 import {ElMessage, ElMessageBox} from "element-plus";
 
 const props = withDefaults(defineProps<{
-  running: boolean
-  deletable: boolean
-  display: Array<string>
+  running?: boolean
+  deletable?: boolean
+  display?: Array<string>
 }>(), {
   running: false,
   deletable: false,

@@ -2,13 +2,13 @@
 import {BotInstanceInfo} from "@/types/vortexa-type.ts";
 import {onMounted, ref} from "vue";
 import LaunchConfigEditor
-  from "@/views/homepage/script-bot-detail/components/bot-instance-extra-info/components/launch-config-editor.vue";
+  from "@/views/homepage/script-bot-instance-detail/components/bot-instance-extra-info/components/launch-config-editor.vue";
 import {saveBotLaunchConfigNetwork} from "@/api/bot.ts";
 import {ElMessage} from "element-plus";
 import BotInstanceAccountTable
-  from "@/views/homepage/script-bot-detail/components/bot-instance-extra-info/components/bot-instance-account-table.vue";
+  from "@/views/homepage/script-bot-instance-detail/components/bot-instance-extra-info/components/bot-instance-account-table.vue";
 import BotInstanceRuningLog
-  from "@/views/homepage/script-bot-detail/components/bot-instance-extra-info/components/bot-instance-runing-log.vue";
+  from "@/views/homepage/script-bot-instance-detail/components/bot-instance-extra-info/components/bot-instance-runing-log.vue";
 
 const props = defineProps<{
   botInstance: BotInstanceInfo

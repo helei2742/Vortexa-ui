@@ -631,10 +631,34 @@ export class ScriptNode {
   }
 }
 
+export interface BotMetaInfo {
+  botName: string;
+  version: string;
+  icon: string;
+  resourceDir: string;
+  classJarPath: string;
+  className: string;
+  extraClassNameList: string[];
+}
+
 /**
  * 已注册的script node 信息
  */
-export class RegisteredScriptNode {
+export class ScriptNodeDetail {
   scriptNode: ScriptNode
-  online: boolean
+  metaInfoMap: Record<string, BotMetaInfo>
+  botNameToBotKeys: Record<string, Array<string>>
+  onlineBotNameToKeys: Record<string, Array<string>>
+
+  constructor(data: {
+    scriptNode: ScriptNode,
+    metaInfoMap: Record<string, BotMetaInfo>,
+    botNameToBotKeys: Record<string, Array<string>>
+    onlineBotNameToKeys: Record<string, Array<string>>
+  }) {
+    this.scriptNode = data.scriptNode
+    this.metaInfoMap = data.metaInfoMap
+    this.botNameToBotKeys = data.botNameToBotKeys
+    this.onlineBotNameToKeys = data.onlineBotNameToKeys
+  }
 }
