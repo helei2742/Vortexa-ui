@@ -8,7 +8,8 @@ export const usePageTabStore = defineStore('pageTab', () => {
 
   const pageList: Ref<Array<PageTabInfo>> = ref([new PageTabInfo({
     path: 'introduce',
-    id: 'introduce'
+    id: 'introduce',
+    icon: 'introduce'
   })])
   const currentPage: Ref<PageTabInfo | null> = ref(null)
 

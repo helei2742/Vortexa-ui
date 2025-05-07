@@ -1,14 +1,19 @@
 import request from '@/util/request.ts'
 import {type PageQuery, PageResult, type Result} from "@/types/vortexa-type-common.ts";
-import {AutoBotJobParams, BotInstanceAccount, BotInstanceDetail} from "@/types/vortexa-type.ts";
-import {API_DEFAULT_PAGE, API_DEFAULT_PAGE_SIZE} from "@/config/vortexa-config.ts";
+import {
+  AutoBotJobParams,
+  BotInfo,
+  BotInstanceAccount,
+  BotInstanceDetail
+} from "@/types/vortexa-type.ts";
 
 /**
  * 分页查询bot
  * @param pageQuery pageQuery
  * @returns {*}
  */
-export function pageQueryBotInfoNetwork(pageQuery: PageQuery) {
+export function pageQueryBotInfoNetwork(pageQuery: PageQuery)
+  : Promise<Result<PageResult<BotInfo>>> {
   return request({
     url: '/bot/pageQuery',
     method: 'post',

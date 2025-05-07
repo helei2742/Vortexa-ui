@@ -65,7 +65,6 @@ watch(
 
       <script-node-loaded-bot-list
         :script-node-name="scriptNodeName"
-        :meta-info-map="scriptNodeDetail.metaInfoMap"
         :online-bot-name-to-keys="scriptNodeDetail.onlineBotNameToKeys"
         :bot-name-to-bot-keys="scriptNodeDetail.botNameToBotKeys"
       />

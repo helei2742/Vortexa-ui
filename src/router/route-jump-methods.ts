@@ -13,6 +13,22 @@ export const openBotInstanceDetail = async (scriptNodeName, botKey) => {
   })
 }
 
+export const openBotInstanceCreatePage = async (scriptNodeName, botName) => {
+  const {usePageTabStore} = await import('@/stores/usePageTabSrore.ts');
+  const {routeToHiddenPage} = usePageTabStore(); // 此时 pinia 已激活
+
+  routeToHiddenPage({
+    path: 'bot_create',
+    id: botName,
+    icon: 'create-script',
+    payload: {
+      scriptNodeName,
+      botName
+    }
+  })
+}
+
+
 export const openScriptNodeDetail = async (scriptNodeName) => {
   const {usePageTabStore} = await import('@/stores/usePageTabSrore.ts');
   const {routeToHiddenPage} = usePageTabStore(); // 此时 pinia 已激活

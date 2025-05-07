@@ -543,10 +543,11 @@ export class BotInfo {
   image?: string
   jobParams: Map<string, object>
   params: Map<string, object>
+  version: string
   insertDatetime?: string
   updateDatetime?: string
 
-  constructor({id, name, describe, image, jobParams, params, insertDatetime, updateDatetime}
+  constructor({id, name, describe, image, jobParams, params, version, insertDatetime, updateDatetime}
                 : {
                 id?: number,
                 name?: string,
@@ -554,6 +555,7 @@ export class BotInfo {
                 image?: string,
                 jobParams?: Map<string, object>,
                 params?: Map<string, object>,
+                version: string
                 insertDatetime?: string,
                 updateDatetime?: string
               }
@@ -564,6 +566,7 @@ export class BotInfo {
     this.image = image
     this.jobParams = jobParams ? jobParams : new Map<string, object>()
     this.params = params ? params : new Map<string, object>()
+    this.version = version
     this.insertDatetime = insertDatetime
     this.updateDatetime = updateDatetime
   }
@@ -646,18 +649,15 @@ export interface BotMetaInfo {
  */
 export class ScriptNodeDetail {
   scriptNode: ScriptNode
-  metaInfoMap: Record<string, BotMetaInfo>
   botNameToBotKeys: Record<string, Array<string>>
   onlineBotNameToKeys: Record<string, Array<string>>
 
   constructor(data: {
     scriptNode: ScriptNode,
-    metaInfoMap: Record<string, BotMetaInfo>,
     botNameToBotKeys: Record<string, Array<string>>
     onlineBotNameToKeys: Record<string, Array<string>>
   }) {
     this.scriptNode = data.scriptNode
-    this.metaInfoMap = data.metaInfoMap
     this.botNameToBotKeys = data.botNameToBotKeys
     this.onlineBotNameToKeys = data.onlineBotNameToKeys
   }

@@ -111,8 +111,8 @@ watch(isFullScreen, () => {
   top: 0;
   left: 0;
   right: 5px;
-  bottom: 0;
-  height: 100vh !important;
+  bottom: 80px;
+  height: calc(100vh - 80px) !important;
   width: calc(100vw - 35px) !important;
   z-index: 9999;
   background: white;

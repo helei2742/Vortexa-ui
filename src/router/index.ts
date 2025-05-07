@@ -10,6 +10,7 @@ import Setting from '@/views/homepage/setting/vortexa-setting-view.vue'
 
 import VortexaIntroduce from "@/views/homepage/introduce/vortexa-introduce.vue";
 import BotDetail from '@/views/homepage/script-bot-instance-detail/script-bot-detail.vue'
+import BotCreate from '@/views/homepage/script-bot-instance-create/script-bot-instance-create.vue'
 import ScriptNodeDetail from '@/views/homepage/script-node-detail/script-node-detail.vue'
 
 export const hiddenHomePageRoutes = [
@@ -29,6 +30,16 @@ export const hiddenHomePageRoutes = [
     name: 'bot_detail',
     meta: {
       title: 'BotDetail',
+      keepAlive: true,
+      hidden: true
+    }
+  },
+  {
+    path: 'bot_create',
+    component: BotCreate,
+    name: 'bot_create',
+    meta: {
+      title: 'BotCreate',
       keepAlive: true,
       hidden: true
     }
