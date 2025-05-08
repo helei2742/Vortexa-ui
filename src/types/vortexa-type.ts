@@ -662,3 +662,15 @@ export class ScriptNodeDetail {
     this.onlineBotNameToKeys = data.onlineBotNameToKeys
   }
 }
+
+
+export class BotLaunchConfig {
+  id?: number
+  scriptNodeName?: string
+  botName?: string
+  botKey?: string
+  customConfig?: Record<string, never>
+  insertDatetime?: string
+  updateDatetime?: string
+  botInfo?: object
+}

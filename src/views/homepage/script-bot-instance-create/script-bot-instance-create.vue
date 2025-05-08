@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
+import ContentBlock from "@/components/content-block/content-block.vue";
+import CreateBotInstanceForm
+  from "@/views/homepage/script-bot-instance-create/components/create-bot-instance-form.vue";
 
 const route = useRoute()
 
@@ -37,11 +40,18 @@ watch(
 </script>
 
 <template>
-<div>
-  {{scriptNodeName}}-{{botName}}
-</div>
+  <content-block>
+    <create-bot-instance-form
+      class="create-form"
+      :script-node-name="scriptNodeName"
+      :bot-name="botName"
+      />
+  </content-block>
 </template>
 
 <style scoped>
-
+.create-form {
+  max-width: 500px;
+  margin: 0 auto;
+}
 </style>
