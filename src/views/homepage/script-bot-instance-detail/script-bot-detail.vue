@@ -57,10 +57,11 @@ watch(
   <div class="script-bot-detail">
     <content-block>
       <template #header>
-
+        <div style="text-align: center;font-size: 26px">{{botKey}}</div>
       </template>
       <template #default>
         <div>
+          <el-divider/>
           <div v-if="botInstanceDetail">
             <bot-instance-info
               @reload-data="queryBotInstance(scriptNodeName, botKey)"

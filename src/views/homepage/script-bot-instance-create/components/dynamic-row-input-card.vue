@@ -23,17 +23,18 @@ const addNewRow = () => {
         click plus to add config line
       </div>
       <div v-else v-for="(keyValue, index) in keyValues" :key="index" class="config-line">
-        <el-input class="row-input" v-model="keyValue[0]" clearable/>
-        -
-        <el-input class="row-input" v-model="keyValue[1]" clearable/>
-        <el-button circle type="text" size="small"
+        <el-input class="row-input" v-model="keyValue[0]" clearable size="small"/>
+        <span class="dash">:</span>
+        <el-input class="row-input" v-model="keyValue[1]" clearable size="small"/>
+        <el-link  size="small"
                    style="color: #000000"
-                   @click="keyValues.remove(inde)"
+                   @click="keyValues.splice(index, 1)"
+                   class="delete-btn"
         >
           <el-icon>
             <CloseBold/>
           </el-icon>
-        </el-button>
+        </el-link>
       </div>
     </div>
   </div>
@@ -55,6 +56,7 @@ const addNewRow = () => {
 .row-input {
   width: 35%;
   min-width: 120px;
+
 }
 
 .card-header {
@@ -74,6 +76,10 @@ const addNewRow = () => {
   display: flex;
   align-items: center;
   gap: 10px;
+  border: 1px rgba(100, 100, 100, 0.3) solid;
+  padding: 0 5px;
+  border-radius: 6px;
+  background-color: #a1a3aa;
 }
 
 .row-input {
