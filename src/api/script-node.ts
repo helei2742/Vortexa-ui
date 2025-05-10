@@ -17,13 +17,40 @@ export function queryAllRegisteredScriptNodeNetwork(): Promise<Result<Array<Scri
  * 查询script node detail
  * @returns {*}
  */
-export function queryScriptNodeDetailNetwork(scriptNodeName:string): Promise<Result<ScriptNodeDetail>> {
+export function queryScriptNodeDetailNetwork(scriptNodeName: string): Promise<Result<ScriptNodeDetail>> {
   return request({
     url: '/script-node/detail/' + scriptNodeName,
     method: 'post'
   })
 }
 
+
+/**
+ * 查询script node 配置
+ * @returns {*}
+ */
+export function queryScriptNodeConfigNetwork(scriptNodeName: string): Promise<Result<string>> {
+  return request({
+    url: '/script-node/remote-config/' + scriptNodeName,
+    method: 'post'
+  })
+}
+
+
+/**
+ * 查询script node 配置
+ * @returns {*}
+ */
+export function updateScriptNodeConfigNetwork(scriptNodeName: string, config: string): Promise<Result<never>> {
+  return request({
+    url: '/script-node/remote-config/update',
+    method: 'post',
+    data: {
+      scriptNodeName,
+      nodeAppConfig: config
+    }
+  })
+}
 
 /**
  * 开启节点中的bot

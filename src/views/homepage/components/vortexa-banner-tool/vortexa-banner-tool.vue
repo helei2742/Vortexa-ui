@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {Calendar, DCaret} from '@element-plus/icons-vue'
+import logo from '@/assets/logo.png'
 import {onMounted, ref} from 'vue'
 
 const calenderVisible = ref(false)
@@ -20,9 +21,12 @@ onMounted(()=>{
   <div class="vortexa-banner">
     <div class="avatar-wrapper">
       <el-avatar
-        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+        style="background-color: transparent"
+        shape="square"
+        :size="40"
+        :src="logo"
       />
-      <span style="font-weight: 700">Vortexa</span>
+      <span style="font-weight: 700; margin-left: 5px">Vortexa</span>
     </div>
 
     <el-divider/>
@@ -87,7 +91,7 @@ onMounted(()=>{
 
 .avatar-wrapper {
   display: flex;
-  align-items: baseline; /* 垂直居中 */
+  align-items: center; /* 垂直居中 */
   margin-bottom: 10px;
 }
 

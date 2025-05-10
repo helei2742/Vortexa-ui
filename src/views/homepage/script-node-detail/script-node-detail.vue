@@ -8,6 +8,8 @@ import ScriptNodeBaseInfo
 import ContentBlock from "@/components/content-block/content-block.vue";
 import ScriptNodeLoadedBotList
   from "@/views/homepage/script-node-detail/components/script-node-loaded-bot-list.vue";
+import ScriptNodeConfigEditor
+  from "@/views/homepage/script-node-detail/components/script-node-config-editor.vue";
 
 const route = useRoute()
 
@@ -29,15 +31,16 @@ const queryScriptNodeDetail = () => {
 
 // 进入页面，获取参数判断是否是进入当前页面，如果是尝试发送请求重新获取参数
 const handleQueryChange = () => {
-  if (route.query && route.query.data) {
+  if (route.path.endsWith('script_node_detail') && route.query && route.query.data) {
     const data = JSON.parse(route.query.data)
-    if (scriptNodeName.value === '' || scriptNodeName.value === data.scriptNodeName) {
+    if (scriptNodeName.value === '') {
       scriptNodeName.value = data.scriptNodeName
-
       queryScriptNodeDetail()
     }
   }
 };
+
+const activeTag = ref('BotInstance')
 
 // 1. 组件加载时调用
 onMounted(() => {
@@ -58,16 +61,27 @@ watch(
   <content-block>
     <div v-loading="loading" v-if="scriptNodeDetail">
       <script-node-base-info
+        @reload-data="queryScriptNodeDetail"
         style="overflow-x: scroll"
         :script-node="scriptNodeDetail.scriptNode"
       />
       <el-divider/>
 
-      <script-node-loaded-bot-list
-        :script-node-name="scriptNodeName"
-        :online-bot-name-to-keys="scriptNodeDetail.onlineBotNameToKeys"
-        :bot-name-to-bot-keys="scriptNodeDetail.botNameToBotKeys"
-      />
+      <el-tabs v-model="activeTag">
+        <el-tab-pane label="Bot Instance" name="BotInstance">
+          <script-node-loaded-bot-list
+            :script-node-name="scriptNodeName"
+            :loaded-bot-infos="scriptNodeDetail.scriptNode.loadedBotInfos"
+            :online-bot-name-to-keys="scriptNodeDetail.onlineBotNameToKeys"
+            :bot-name-to-bot-keys="scriptNodeDetail.botNameToBotKeys"
+          />
+        </el-tab-pane>
+        <el-tab-pane label="Config" name="Config">
+          <script-node-config-editor
+            :script-node-name="scriptNodeName"
+          />
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </content-block>
 </template>

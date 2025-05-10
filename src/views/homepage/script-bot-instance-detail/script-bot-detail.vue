@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import {onMounted, type Ref, ref, watch} from 'vue';
 import {useRoute} from 'vue-router';
-import {queryBotInstanceNetwork} from "@/api/bot.ts";
+import {queryBotInstanceNetwork} from "@/api/bot-instance.ts";
 import {BotInstanceDetail} from "@/types/vortexa-type.ts";
-import BotInstanceInfo from "@/views/homepage/script-bot-instance-detail/components/bot-instance-info/bot-instance-info.vue";
+import BotInstanceInfo
+  from "@/views/homepage/script-bot-instance-detail/components/bot-instance-info/bot-instance-info.vue";
 import ContentBlock from "@/components/content-block/content-block.vue";
 import BotInstanceExtraInfo
   from "@/views/homepage/script-bot-instance-detail/components/bot-instance-extra-info/bot-instance-extra-info.vue";
+import {Refresh} from "@element-plus/icons-vue";
 
 const route = useRoute()
 
@@ -16,11 +18,10 @@ const botInstanceDetail: Ref<BotInstanceDetail> = ref(null)
 
 // 进入页面，获取参数判断是否是进入当前页面，如果是尝试发送请求重新获取参数
 const handleQueryChange = () => {
-  if (route.query && route.query.data) {
+  if (route.path.endsWith('bot_detail') && route.query && route.query.data) {
     const data = JSON.parse(route.query.data)
     if (
-      (scriptNodeName.value === '' && botKey.value === '') ||
-      (scriptNodeName.value === data.scriptNodeName && botKey.value === data.botKey)
+      (scriptNodeName.value === '' && botKey.value === '')
     ) {
       scriptNodeName.value = data.scriptNodeName
       botKey.value = data.botKey
@@ -57,7 +58,7 @@ watch(
   <div class="script-bot-detail">
     <content-block>
       <template #header>
-        <div style="text-align: center;font-size: 26px">{{botKey}}</div>
+        <div style="text-align: center;font-size: 26px;flex: 1">{{ botKey }}</div>
       </template>
       <template #default>
         <div>

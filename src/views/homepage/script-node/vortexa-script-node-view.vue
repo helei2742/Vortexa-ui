@@ -4,8 +4,7 @@ import ContentBlock from "@/components/content-block/content-block.vue";
 import {queryAllRegisteredScriptNodeNetwork} from "@/api/script-node.ts";
 import {onMounted, ref} from "vue";
 import {ScriptNode} from "@/types/vortexa-type.ts";
-import ScriptNodeTableCard from "@/views/homepage/script-node/components/script-node-table-card.vue";
-import {openBotInstanceDetail, openScriptNodeDetail} from "@/router/route-jump-methods.ts";
+import {openScriptNodeDetail} from "@/router/route-jump-methods.ts";
 
 const scriptNodeList = ref()
 
@@ -55,16 +54,7 @@ onMounted(async () => {
         height="500"
         fit
       >
-        <el-table-column type="expand">
-          <template #default="props">
-            <script-node-table-card
-              @open-script-node-detail="openScriptNodeDetail"
-              @open-bot-detail="openBotInstanceDetail"
-              :script-node="props.row"
-            />
-          </template>
-        </el-table-column>
-
+        <el-table-column type="index"/>
         <el-table-column label="nodeName" sortable min-width="160">
           <template #default="scope">
             <el-link  @click="openScriptNodeDetail(scope.row.scriptNodeName)">

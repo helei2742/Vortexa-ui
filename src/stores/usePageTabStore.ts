@@ -16,7 +16,6 @@ export const usePageTabStore = defineStore('pageTab', () => {
   // 路由到隐藏页
   const routeToHiddenPage = ({path, id, payload, icon}) => {
     let indexOf = pageList.value.findIndex(item => item.path === path && item.id === id)
-    console.log('route payload', indexOf, pageList.value)
 
     if (indexOf === -1) {
       const pageTab = new PageTabInfo({path, id, payload, icon})
@@ -31,13 +30,13 @@ export const usePageTabStore = defineStore('pageTab', () => {
   // 移除隐藏页
   const removeHiddenPage = ({path, id}) => {
     const indexOf = pageList.value.findIndex(item => item.path === path && item.id === id)
-    console.log('remove', indexOf)
     if (indexOf !== -1) {
       pageList.value.splice(indexOf, 1)
       const lastIdx = pageList.value.length - 1
       if (lastIdx >= 0) {
         const pageTab = pageList.value[lastIdx]
-        router.push({name: path, query: {data: JSON.stringify(pageTab.payload)}})
+        router.push({name: pageTab.path, query: {data: JSON.stringify(pageTab.payload)}})
+        currentPage.value = pageTab
       } else {
         router.push('/')
       }

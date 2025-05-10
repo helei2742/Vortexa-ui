@@ -3,7 +3,7 @@ import {type Ref, ref} from "vue";
 import {BotInstanceAccount} from "@/types/vortexa-type.ts";
 import DynamicAddFieldTable from "@/components/dynamic-add-field-table.vue";
 import {flattenObject} from "@/util/common.ts";
-import {pageQueryBotInstanceAccountNetwork} from "@/api/bot.ts";
+import {pageQueryBotInstanceAccountNetwork} from "@/api/bot-instance.ts";
 
 const props = defineProps<{
   scriptBotName: string,

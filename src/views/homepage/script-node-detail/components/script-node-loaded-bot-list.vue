@@ -3,10 +3,11 @@ import {computed, onMounted, type Ref, ref} from "vue";
 import {openBotInstanceCreatePage, openBotInstanceDetail} from "@/router/route-jump-methods.ts";
 import type {BotInfo} from "@/types/vortexa-type.ts";
 import {PageQuery} from "@/types/vortexa-type-common.ts";
-import {pageQueryBotInfoNetwork} from "@/api/bot.ts";
+import {pageQueryBotInfoNetwork} from "@/api/bot-info.ts";
 
 const props = defineProps<{
   scriptNodeName: string
+  loadedBotInfos: Array<string>
   onlineBotNameToKeys: Record<string, Array<string>>
   botNameToBotKeys: Record<string, Array<string>>
 }>()
@@ -34,6 +35,26 @@ const existInstance = computed(() => {
   }
 })
 
+// 是否加载例bot info
+const isLoadedBotInfo = computed(() => {
+  return (botName) => {
+    return props.loadedBotInfos.indexOf(botName) !== -1
+  }
+})
+
+
+const countColor = computed(() => {
+  return (botName) => {
+    if (existInstance.value(botName).length == 0) {
+      return '#ced0d5'
+    }
+    if ((onlineInstance.value(botName).length == existInstance.value(botName).length)) {
+      return '#91f95b'
+    }
+    return '#f9937f'
+  }
+})
+
 // 打开bot详情页面
 const openBotInstanceDetailPage = (botKey) => {
   openBotInstanceDetail(props.scriptNodeName, botKey)
@@ -43,6 +64,7 @@ const openBotInstanceDetailPage = (botKey) => {
 const openCreateBotInstancePage = (botName) => {
   openBotInstanceCreatePage(props.scriptNodeName, botName)
 }
+
 
 const loading = ref(false)
 // 分页参数
@@ -101,18 +123,21 @@ onMounted(() => {
       <el-table-column label="version" width="90">
         <template #default="scope">
           <el-tag type="success">
-            {{ scope.row.version }}
+            {{ scope.row.versionCode }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="instance count">
         <template #default="scope">
           <el-dropdown size="small">
-            <el-tag class="button-morandi">
+            <el-button
+                       size="small"
+                       :style="{'backgroundColor':countColor(scope.row.name)}"
+            >
               {{
                 onlineInstance(scope.row.name).length + '/' + existInstance(scope.row.name).length
               }}
-            </el-tag>
+            </el-button>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item
@@ -130,9 +155,15 @@ onMounted(() => {
       <el-table-column width="100" fixed="right">
         <template #default="scope">
           <el-button size="small" type="success"
+                     v-if="isLoadedBotInfo(scope.row.name)"
                      @click="openCreateBotInstancePage(scope.row.name)"
           >
             create
+          </el-button>
+          <el-button size="small" type="warning"
+                     v-else
+          >
+            load
           </el-button>
         </template>
       </el-table-column>
@@ -155,5 +186,8 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
+.t{
+  background-color: #f9937f;
+  color: #91f95b;
+}
 </style>

@@ -8,7 +8,7 @@ import {
   pauseScriptJobNetwork,
   startScriptJobNetwork,
   updateBotJobParamNetwork
-} from "@/api/bot.ts";
+} from "@/api/bot-instance.ts";
 import {ElMessage} from "element-plus";
 import LaunchControlBar from "@/components/launch-control-bar.vue";
 

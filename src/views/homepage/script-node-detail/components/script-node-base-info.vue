@@ -1,12 +1,13 @@
 <script setup lang="ts">
-
+import {Refresh} from '@element-plus/icons-vue'
 import type {ScriptNode} from "@/types/vortexa-type.ts";
 import {toLocalDatetimeStr} from "@/util/common.ts";
-
 
 defineProps<{
   scriptNode: ScriptNode
 }>()
+
+const emit = defineEmits(['reload-data'])
 </script>
 
 <template>
@@ -17,6 +18,11 @@ defineProps<{
       border
       :column="3"
     >
+      <template #extra>
+        <el-button type="text" @click="emit('reload-data')">
+          <el-icon><Refresh /></el-icon>
+        </el-button>
+      </template>
       <el-descriptions-item label="status">
         <el-tag v-if="scriptNode.online" type="success">
           Online

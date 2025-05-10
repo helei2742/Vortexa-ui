@@ -1,12 +1,39 @@
 <script setup lang="ts">
-import {type Ref, ref} from "vue";
+import {onMounted, type Ref, ref} from "vue";
 import {Plus, CloseBold} from "@element-plus/icons-vue"
 
-const keyValues: Ref<Array<Array<string>>> = ref([])
+const prop = defineProps<{
+  keyValues: Record<string, never>
+}>()
+
+const editKeyValues: Ref<Array<Array<string>>> = ref([])
 
 const addNewRow = () => {
-  keyValues.value.push(['', ''])
+  editKeyValues.value.push(['', ''])
 }
+
+const isValidKeyValue = (keyValue: Array<string>) => {
+  return !!keyValue[0];
+}
+
+const getKeyValues = () => {
+  const keyValueMap = {}
+  editKeyValues.value.forEach(kv => {
+    if (kv[0] != null) {
+      keyValueMap[kv[0]] = kv[1]
+    }
+  })
+
+  return keyValueMap
+}
+
+defineExpose({getKeyValues})
+
+onMounted(()=>{
+  if (prop.keyValues) {
+    editKeyValues.value = Object.keys(prop.keyValues).map(key => [key, prop.keyValues[key]])
+  }
+})
 </script>
 
 <template>
@@ -19,17 +46,21 @@ const addNewRow = () => {
       </el-button>
     </div>
     <div class="card-body">
-      <div v-if="keyValues.length <= 0">
+      <div v-if="editKeyValues.length <= 0">
         click plus to add config line
       </div>
-      <div v-else v-for="(keyValue, index) in keyValues" :key="index" class="config-line">
+      <div v-else v-for="(keyValue, index) in editKeyValues"
+           :key="index"
+           class="config-line"
+           :class="{'success-line': isValidKeyValue(keyValue)}"
+      >
         <el-input class="row-input" v-model="keyValue[0]" clearable size="small"/>
         <span class="dash">:</span>
         <el-input class="row-input" v-model="keyValue[1]" clearable size="small"/>
-        <el-link  size="small"
-                   style="color: #000000"
-                   @click="keyValues.splice(index, 1)"
-                   class="delete-btn"
+        <el-link size="small"
+                 style="color: #000000"
+                 @click="editKeyValues.splice(index, 1)"
+                 class="delete-btn"
         >
           <el-icon>
             <CloseBold/>
@@ -51,35 +82,40 @@ const addNewRow = () => {
   background-color: #ffffff;
   max-width: 600px;
   margin: 20px auto;
+
+  width: 100%;
 }
 
 .row-input {
   width: 35%;
   min-width: 120px;
-
 }
 
 .card-header {
-  display: flex;
-  justify-content: flex-end;
   margin-bottom: 12px;
   margin-right: 10px;
+  width: 28px;
 }
 
 .card-body {
+  flex: 1;
+  padding: 0 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 1px;
 }
 
 .config-line {
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 1px rgba(100, 100, 100, 0.3) solid;
-  padding: 0 5px;
+  border: 1px #fafaf9 solid;
+  padding: 3px 5px;
   border-radius: 6px;
-  background-color: #a1a3aa;
+  background-color: #f99f8b;
+}
+.success-line {
+  background-color: #aec6f6;
 }
 
 .row-input {

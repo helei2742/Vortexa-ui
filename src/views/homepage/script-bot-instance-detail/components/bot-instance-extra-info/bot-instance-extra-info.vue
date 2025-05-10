@@ -3,7 +3,7 @@ import {BotInstanceInfo} from "@/types/vortexa-type.ts";
 import {onMounted, ref} from "vue";
 import LaunchConfigEditor
   from "@/views/homepage/script-bot-instance-detail/components/bot-instance-extra-info/components/launch-config-editor.vue";
-import {saveBotLaunchConfigNetwork} from "@/api/bot.ts";
+import {saveBotLaunchConfigNetwork} from "@/api/bot-instance.ts";
 import {ElMessage} from "element-plus";
 import BotInstanceAccountTable
   from "@/views/homepage/script-bot-instance-detail/components/bot-instance-extra-info/components/bot-instance-account-table.vue";
@@ -12,7 +12,7 @@ import BotInstanceRuningLog
 
 const props = defineProps<{
   botInstance: BotInstanceInfo
-  botLaunchConfig: string
+  botLaunchConfig: Record<string, never>
 }>()
 
 const activeTag = ref('Reword')
@@ -24,6 +24,7 @@ const saveBotLaunchConfig = (editLaunchConfig) => {
   loading.value = true
   saveBotLaunchConfigNetwork({
     scriptNodeName: props.botInstance.scriptNodeName,
+    botName: props.botInstance.botName,
     botKey: props.botInstance.botKey,
     botLaunchConfig: editLaunchConfig
   }).then(result => {

@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts" setup>
-import {House, User, Setting, Compass, Wallet} from '@element-plus/icons-vue'
+import {Setting, Compass, Wallet} from '@element-plus/icons-vue'
 import {computed} from 'vue'
 import {useRouter} from "vue-router";
 import VortexaIcon from "@/components/vortexa-icon.vue";

@@ -436,7 +436,7 @@ export class BotInstanceInfo {
  * 实例详情
  */
 export class BotInstanceDetail extends BotInstanceInfo {
-  botLaunchConfig: string
+  botLaunchConfig: Record<string, never>
   botInstance: BotInstanceInfo
   botInfo: BoInfo
   jobTriggers: Map<string, Array<JobTrigger>>
@@ -449,7 +449,7 @@ export class BotInstanceDetail extends BotInstanceInfo {
                        jobTriggers,
                        online
                      }: {
-    botLaunchConfig: string
+    botLaunchConfig: Record<string, never>
     botInstance: BotInstanceInfo
     botInfo: BoInfo
     jobTriggers: Map<string, Array<JobTrigger>>
@@ -543,11 +543,11 @@ export class BotInfo {
   image?: string
   jobParams: Map<string, object>
   params: Map<string, object>
-  version: string
+  versionCode: string
   insertDatetime?: string
   updateDatetime?: string
 
-  constructor({id, name, describe, image, jobParams, params, version, insertDatetime, updateDatetime}
+  constructor({id, name, describe, image, jobParams, params, versionCode, insertDatetime, updateDatetime}
                 : {
                 id?: number,
                 name?: string,
@@ -555,7 +555,7 @@ export class BotInfo {
                 image?: string,
                 jobParams?: Map<string, object>,
                 params?: Map<string, object>,
-                version: string
+    versionCode: string
                 insertDatetime?: string,
                 updateDatetime?: string
               }
@@ -566,7 +566,7 @@ export class BotInfo {
     this.image = image
     this.jobParams = jobParams ? jobParams : new Map<string, object>()
     this.params = params ? params : new Map<string, object>()
-    this.version = version
+    this.versionCode = versionCode
     this.insertDatetime = insertDatetime
     this.updateDatetime = updateDatetime
   }
@@ -586,6 +586,7 @@ export class ScriptNode {
   instanceId: string
   description: string
   managedBotKeyList: Array<string>
+  loadedBotInfos: Array<string>
   online: boolean
   insertDatetime: string
   updateDatetime: string
@@ -600,6 +601,7 @@ export class ScriptNode {
                 instanceId,
                 description,
                 managedBotKeyList,
+                loadedBotInfos,
                 online,
                 insertDatetime,
                 updateDatetime
@@ -614,6 +616,7 @@ export class ScriptNode {
                 instanceId: string
                 description: string
                 managedBotKeyList: Array<string>
+                loadedBotInfos: Array<string>
                 online: boolean,
                 insertDatetime: string,
                 updateDatetime: string
@@ -628,6 +631,7 @@ export class ScriptNode {
     this.instanceId = instanceId
     this.description = description
     this.managedBotKeyList = managedBotKeyList
+    this.loadedBotInfos = loadedBotInfos
     this.online = online
     this.insertDatetime = insertDatetime
     this.updateDatetime = updateDatetime

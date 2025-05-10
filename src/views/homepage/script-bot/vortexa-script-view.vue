@@ -5,7 +5,7 @@ import {BotInstanceInfo} from "@/types/vortexa-type.ts";
 import {onMounted, ref, nextTick, computed, reactive} from "vue";
 import ContentBlock from "@/components/content-block/content-block.vue";
 import {BotInstanceStatus} from "@/config/vortexa-config.ts";
-import {pageQueryBotInstanceNetwork, startScriptJobNetwork} from "@/api/bot.ts";
+import {pageQueryBotInstanceNetwork, startScriptJobNetwork} from "@/api/bot-instance.ts";
 import {PageQuery, PageResult} from "@/types/vortexa-type-common.ts";
 import {ElMessage} from "element-plus";
 

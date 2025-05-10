@@ -2,40 +2,21 @@ import request from '@/util/request.ts'
 import {type PageQuery, PageResult, type Result} from "@/types/vortexa-type-common.ts";
 import {
   AutoBotJobParams,
-  BotInfo,
   BotInstanceAccount,
-  BotInstanceDetail
+  BotInstanceDetail, BotLaunchConfig
 } from "@/types/vortexa-type.ts";
 
-/**
- * 分页查询bot
- * @param pageQuery pageQuery
- * @returns {*}
- */
-export function pageQueryBotInfoNetwork(pageQuery: PageQuery)
-  : Promise<Result<PageResult<BotInfo>>> {
-  return request({
-    url: '/bot/pageQuery',
-    method: 'post',
-    data: pageQuery
-  })
-}
 
 /**
- * 创建bot
- * @param botId
- * @param botKey
- * @param accountIds
+ * 创建bot的启动参数
+ * @param botLaunchConfig
  */
-export function createBot({botId, botKey, accountIds}) {
+export function createBotLaunchConfigNetwork(botLaunchConfig: BotLaunchConfig):
+  Promise<Result<never>> {
   return request({
-    url: '/bot/create',
+    url: '/botInstance/create',
     method: 'post',
-    data: {
-      botId,
-      botKey,
-      accountIds
-    }
+    data: botLaunchConfig
   })
 }
 
@@ -132,6 +113,7 @@ export function updateBotJobParamNetwork(data: {
  */
 export function saveBotLaunchConfigNetwork(data: {
   scriptNodeName,
+  botName,
   botKey,
   botLaunchConfig
 }): Promise<Result<never>> {

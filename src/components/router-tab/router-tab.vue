@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {usePageTabStore} from "@/stores/usePageTabSrore.ts";
+import {usePageTabStore} from "@/stores/usePageTabStore.ts";
 import {storeToRefs} from "pinia";
 import {ref, watch} from 'vue';
 import VortexaIcon from "@/components/vortexa-icon.vue";
@@ -67,7 +67,7 @@ watch(
 
 <style scoped>
 .router-tab {
-  width: calc(100vh - 250px);
+  width: 100%;
   overflow-x: scroll;
 }
 
